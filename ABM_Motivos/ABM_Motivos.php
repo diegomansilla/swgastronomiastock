@@ -1,28 +1,21 @@
 <?php
-include 'conectar.php';
-
+include 'conectar.php';//Incluye en archivo de conexion a base de datos
 $edicion = false; // Variable para determinar si es una edición o un nuevo registro
 
 // Datos por defecto para el formulario
 // Si es una edición, se llenarán con los datos de la base de datos
 $datos = [
-    'codigo_barra' => '',
+    'nombre' => '',
     'descripcion' => '',
-    'cantidad' => '',
-    'fecha_lote' => '',
-    'fecha_ingreso' => '',
-    'fecha_vencimiento' => '',
-    'contenido_neto' => '',
-    'marca' => ''
+    'codigo_barra' => '',
+    
 ];
-
-// Si se está editando, se obtienen los datos de la base de datos
+ // Si se está editando, se obtienen los datos de la base de datos
 if (isset($_GET['id'])){
     $edicion = true;// Se está editando un registro
     $id = $_GET['id'];// ID del registro a editar
 
-    $sql = "SELECT id, codigo_barra, descripcion, cantidad, fecha_lote, fecha_ingreso, fecha_vencimiento, 
-    contenido_neto, marca FROM materia_prima WHERE id = ?";
+    $sql = "SELECT nombre, descripcion, codigo_barra FROM ABM_Motivos WHERE id = ?";
     $stmt = $connection->prepare($sql);// Preparar la consulta
     $stmt->bind_param("i", $id);// Vincular el parámetro ID
     $stmt->execute();// Ejecutar la consulta
@@ -34,7 +27,7 @@ if (isset($_GET['id'])){
     if ($resultado->num_rows > 0) {
         $datos = $resultado->fetch_assoc();// Obtener los datos del registro
     } else {
-        header("Location:materiaprima_lista.php?error=notfound");// Redirigir a la lista de materias primas con un error
+        header("Location:ABM_Motivos.php?error=notfound");// Redirigir a la lista de materias primas con un error
         exit;
     }
     $stmt->close();
@@ -70,36 +63,16 @@ if (isset($_GET['id'])){
                             Stock
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="ingredientes.php">Ver Ingredientes</a></li>
-                            <li><a class="dropdown-item" href="nuevo_ingrediente.php">Agregar Ingrediente</a></li>
+                            <li><a class="dropdown-item" href="ingredientes.php">Ver Motivos</a></li>
+                            <li><a class="dropdown-item" href="nuevo_ingrediente.php">Agregar Motivos</a></li>
                         </ul>
                     </li>
 
-                    <!-- Sección: Platos -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="platosDropdown" role="button" data-bs-toggle="dropdown">
-                            Platos
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="platos.php">Ver Platos</a></li>
-                            <li><a class="dropdown-item" href="nuevo_plato.php">Crear Plato</a></li>
-                        </ul>
-                    </li>
-
-
-
-                <!--
                     
-                    CREAR "platos.php" Y "nuevo_plato.php"
-                    
-                                                            -->
-
-
-
 
                     <!-- Sección: Alertas -->
                     <li class="nav-item">
-                        <a class="nav-link" href="alertas.php">Alertas</a>
+                        <a class="nav-link" href="alertas.php">Alertas</a> 
                     </li>
                 </ul>
 
@@ -114,24 +87,24 @@ if (isset($_GET['id'])){
         <!--Alert con registro guardado o con errores-->
         <?php if (isset($_GET['ok'])): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                ✅ Materia prima guardada correctamente.
+                ✅ Motivo guardado correctamente.
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php elseif (isset($_GET['error'])): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                ❌ Hubo un error al guardar la materia prima.
+                ❌ Hubo un error al guardar el motivo.
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
-        <h2 class="mb-4 text-center">Materia Prima</h2>
-        <form action="<?= $edicion ? 'materiaprima_actualizar.php' : 'materiaprima_guardar.php' ?>" method="POST">
+        <h2 class="mb-4 text-center">Motivos</h2>
+        <form action="<?= $edicion ? 'ABM_Motivos_actualizar.php' : 'ABM_Motivos_guardar.php' ?>" method="POST">
             <?php if ($edicion): ?>
                 <input type="hidden" name="id" value="<?= $datos['id'] ?>">
                 <?php endif; ?>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div class="col-sm-6">
-                    <label for="cod_barra" class="form-label">Código de Barra</label>
+                    <label for="cod_barra" class="form-label">Nombre</label>
                     <input type="text" class="form-control" id="cod_barra" name="cod_barra" placeholder="Ingrese el código de barra" value="<?= htmlspecialchars($datos['codigo_barra']) ?>" required>
                 </div>
                 <div class="col-sm-6">
@@ -139,29 +112,10 @@ if (isset($_GET['id'])){
                     <input type="text" class="form-control" id="descript" name="descript" placeholder="Ingrese la descripción" value="<?= htmlspecialchars($datos['descripcion']) ?>" required>
                 </div>
                 <div class="col-sm-6">
-                    <label for="cant" class="form-label">Cantidad</label>
+                    <label for="cant" class="form-label">Código de Barra</label>
                     <input type="number" class="form-control" id="cant" name="cant" placeholder="Ingrese la cantidad" value="<?= htmlspecialchars($datos['cantidad']) ?>" required>
                 </div>
-                <div class="col-sm-6">
-                    <label for="fcha_lote" class="form-label">Fecha de Lote</label>
-                    <input type="date" class="form-control" id="fcha_lote" name="fcha_lote" value="<?= htmlspecialchars($datos['fecha_lote']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="fcha_ing" class="form-label">Fecha de Ingreso</label>
-                    <input type="date" class="form-control" id="fcha_ing" name="fcha_ing" value="<?= htmlspecialchars($datos['fecha_ingreso']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="fcha_vto" class="form-label">Fecha de Vencimiento</label>
-                    <input type="date" class="form-control" id="fcha_vto" name="fcha_vto" value="<?= htmlspecialchars($datos['fecha_vencimiento']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="cont_neto" class="form-label">Contenido Neto</label>
-                    <input type="text" class="form-control" id="cont_neto" name="cont_neto" placeholder="Ingrese el contenido neto" value="<?= htmlspecialchars($datos['contenido_neto']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="marca" class="form-label">Marca</label>
-                    <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingrese la marca" value="<?= htmlspecialchars($datos['marca']) ?>" required>
-                </div>
+                
                 <div>
                     <button class="btn btn-primary" type="submit">Guardar</button>
                 </div>
