@@ -86,17 +86,6 @@ if (isset($_GET['id'])){
                         </ul>
                     </li>
 
-
-
-                <!--
-                    
-                    CREAR "platos.php" Y "nuevo_plato.php"
-                    
-                                                            -->
-
-
-
-
                     <!-- Sección: Alertas -->
                     <li class="nav-item">
                         <a class="nav-link" href="alertas.php">Alertas</a>
