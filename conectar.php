@@ -2,7 +2,7 @@
 $servidor = "localhost";
 $usuario = "alesio";
 $password = "hero2017";
-$base = "bbdd_gestion";
+$base = "bbdd_gestion1";
 
 $conexion = mysqli_connect($servidor, $usuario, $password, $base);
 

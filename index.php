@@ -1,4 +1,6 @@
+
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -7,6 +9,8 @@
     <title>Sistema Gestión de Stock Software - Gastronomía</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' href='css/bootstrap.min.css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
