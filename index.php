@@ -1,4 +1,6 @@
+
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -7,6 +9,8 @@
     <title>Sistema Gestión de Stock Software - Gastronomía</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' href='css/bootstrap.min.css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -45,7 +49,7 @@
 
                     <!-- Sección: Alertas -->
                     <li class="nav-item">
-                        <a class="nav-link" href="alertas.php">Alertas</a>
+                        <a class="nav-link" href="gestion_alertas/alertas.php">Alertas</a>
                     </li>
                 </ul>
 
@@ -98,7 +102,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Alertas</h5>
                         <p class="card-text">Visualizar productos próximos a vencerse o con stock bajo.</p>
-                        <a href="alertas.php" class="btn btn-warning">Ver Alertas</a>
+                        <a href="gestion_alertas/alertas.php" class="btn btn-warning">Ver Alertas</a>
                     </div>
                 </div>
             </div>
@@ -106,37 +110,6 @@
         </div>
     </div>
 
-    <!-- Card Alertas con mini tabla -->
-    <div class="col">
-        <div class="card h-100 border-warning">
-            <div class="card-body">
-                <h5 class="card-title">Alertas de Stock</h5>
-                <p class="card-text">Productos con bajo stock o cerca de vencer:</p>
-
-                <!-- Mini tabla -->
-                <table class="table table-sm table-bordered">
-                    <thead>
-                        <tr class="table-warning">
-                            <th>Ingrediente</th>
-                            <th>Stock</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Harina</td>
-                            <td>1.2 kg</td>
-                        </tr>
-                        <tr>
-                            <td>Queso</td>
-                            <td>0.5 kg</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <a href="alertas.php" class="btn btn-warning mt-2">Ver todas las alertas</a>
-            </div>
-        </div>
-    </div>
 
     <!-- FOOTER -->
     <footer class="bg-dark text-white text-center py-3 mt-auto">
