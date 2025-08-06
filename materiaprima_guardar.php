@@ -12,6 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fcha_vto = $_POST['fcha_vto'];
     $cont_neto = $_POST['cont_neto'];
     $marca = $_POST['marca'];
+    $id_usuario = 1;
+    $stock_minimo = 1.0;
 
     // Verifica si todos los campos requeridos están llenos
     // Si alguno de los campos está vacío, redirige a la página de materia prima
@@ -25,29 +27,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         !empty($cont_neto) &&
         !empty($marca)
     ) {
-        // guardar en la base
+        // Insertar en Materia Prima
+        $sql_mp = "INSERT INTO materia_prima
+        (codigo_barra, descripcion, contenido_neto, marca, id_usuario, stock_minimo)
+        VALUES (?,?,?,?,?,?)";
+        $stmt1 = $connection->prepare($sql_mp);
+        $stmt1->bind_param("sssisi", $cod_barra, $descript, $cont_neto, $marca, $id_usuario, $stock_minimo);
+        if ($stmt1->execute()) {
+            $id_materia_prima = $connection->insert_id; // Obtener el ID para usar en la otra tabla
+
+            //Insertar en Ingreso Materia Prima
+            $sql_ing = "INSERT INTO ingreso_materia_prima
+            (id_materia_prima, fecha, cantidad, fecha_lote, fecha_vencimiento, id_usuario)
+            VALUES (?,?,?,?,?,?)";
+
+            $stmt2 = $connection->prepare($sql_ing);
+            $stmt2->bind_param("isdssi", $id_materia_prima, $fcha_ing, $cant, $fcha_lote, $fcha_vto, $id_usuario);
+
+            if ($stmt2->execute()){
+                //Si esta todo OK
+                $stmt2->close();
+                $stmt1->close();
+                $connection->close();
+                header("Location: materiaprima_lista.php?ok=1");
+                exit;
+            }else{
+                //Error en ingreso
+                $stmt2->close();
+                $stmt1->close();
+                $connection->close();
+                header("Location: materia_prima.php?error=ingreso");
+                exit;
+            }
+        } else {
+            // Error al guardar materia_prima
+            $stmt1->close();
+            $connection->close();
+            header("Location: materia_prima.php?error=materia");
+            exit;
+        }
+
     } else {
         header("Location: materia_prima.php?error=campos_vacios");
         exit;
     }
-
-    // Preparar la consulta SQL
-    $stmt = $connection->prepare("INSERT INTO materia_prima (codigo_barra, descripcion, cantidad, 
-    fecha_lote, fecha_ingreso, fecha_vencimiento, contenido_neto, marca) 
-            VALUES ('$cod_barra', '$descript', '$cant', '$fcha_lote', '$fcha_ing', '$fcha_vto', 
-            '$cont_neto', '$marca')");
-
-    // Vincular los parámetros a la consulta preparada
-    // En este caso, no es necesario vincular parámetros ya que se están utilizando variables directamente
-    if ($stmt->execute()) {
-        header("Location: materia_prima.php?ok=1");
-        exit;
-    } else {
-        header("Location: materia_prima.php?error=1");
-        exit;
-    }
-
-    $stmt->close();
-    $connection->close();
 }
 

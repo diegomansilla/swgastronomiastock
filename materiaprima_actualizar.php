@@ -6,10 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = isset($_POST['id']) ? $_POST['id'] : null;
     $codigo_barra = $_POST['cod_barra'];
     $descripcion = $_POST['descript'];
-    $cantidad = $_POST['cant'];
-    $fecha_lote = $_POST['fcha_lote'];
-    $fecha_ingreso = $_POST['fcha_ing'];
-    $fecha_vencimiento = $_POST['fcha_vto'];
     $contenido_neto = $_POST['cont_neto'];
     $marca = $_POST['marca'];
 
@@ -19,27 +15,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         !empty($id) &&
         !empty($codigo_barra) &&
         !empty($descripcion) &&
-        !empty($cantidad) &&
-        !empty($fecha_lote) &&
-        !empty($fecha_ingreso) &&
-        !empty($fecha_vencimiento) &&
         !empty($contenido_neto) &&
         !empty($marca)
     ){
         $sql = "UPDATE materia_prima SET 
                 codigo_barra = ?, 
                 descripcion = ?, 
-                cantidad = ?, 
-                fecha_lote = ?, 
-                fecha_ingreso = ?, 
-                fecha_vencimiento = ?, 
                 contenido_neto = ?, 
                 marca = ? 
                 WHERE id = ?";
 
                 $stmt = $connection->prepare($sql);
-                $stmt->bind_param("ssdsssssi", $codigo_barra, $descripcion, $cantidad, $fecha_lote, 
-                $fecha_ingreso, $fecha_vencimiento, $contenido_neto, $marca, $id);// Vincula los parámetros a la consulta preparada
+                $stmt->bind_param("ssssi", $codigo_barra, $descripcion, $contenido_neto, $marca, $id);// Vincula los parámetros a la consulta preparada
 
                if ($stmt->execute()) {
                 $stmt->close();// Cierra la sentencia preparada

@@ -8,10 +8,6 @@ $edicion = false; // Variable para determinar si es una edición o un nuevo regi
 $datos = [
     'codigo_barra' => '',
     'descripcion' => '',
-    'cantidad' => '',
-    'fecha_lote' => '',
-    'fecha_ingreso' => '',
-    'fecha_vencimiento' => '',
     'contenido_neto' => '',
     'marca' => ''
 ];
@@ -21,8 +17,7 @@ if (isset($_GET['id'])){
     $edicion = true;// Se está editando un registro
     $id = $_GET['id'];// ID del registro a editar
 
-    $sql = "SELECT id, codigo_barra, descripcion, cantidad, fecha_lote, fecha_ingreso, fecha_vencimiento, 
-    contenido_neto, marca FROM materia_prima WHERE id = ?";
+    $sql = "SELECT id, codigo_barra, descripcion, contenido_neto, marca FROM materia_prima WHERE id = ?";
     $stmt = $connection->prepare($sql);// Preparar la consulta
     $stmt->bind_param("i", $id);// Vincular el parámetro ID
     $stmt->execute();// Ejecutar la consulta
@@ -126,22 +121,6 @@ if (isset($_GET['id'])){
                 <div class="col-sm-6">
                     <label for="descript" class="form-label">Descripción</label>
                     <input type="text" class="form-control" id="descript" name="descript" placeholder="Ingrese la descripción" value="<?= htmlspecialchars($datos['descripcion']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="cant" class="form-label">Cantidad</label>
-                    <input type="number" class="form-control" id="cant" name="cant" placeholder="Ingrese la cantidad" value="<?= htmlspecialchars($datos['cantidad']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="fcha_lote" class="form-label">Fecha de Lote</label>
-                    <input type="date" class="form-control" id="fcha_lote" name="fcha_lote" value="<?= htmlspecialchars($datos['fecha_lote']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="fcha_ing" class="form-label">Fecha de Ingreso</label>
-                    <input type="date" class="form-control" id="fcha_ing" name="fcha_ing" value="<?= htmlspecialchars($datos['fecha_ingreso']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="fcha_vto" class="form-label">Fecha de Vencimiento</label>
-                    <input type="date" class="form-control" id="fcha_vto" name="fcha_vto" value="<?= htmlspecialchars($datos['fecha_vencimiento']) ?>" required>
                 </div>
                 <div class="col-sm-6">
                     <label for="cont_neto" class="form-label">Contenido Neto</label>

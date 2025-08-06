@@ -3,8 +3,13 @@ include 'conectar.php';// Incluye el archivo de conexión a la base de datos
 
 // Consulta para obtener todas las materias primas
 // Se seleccionan los campos necesarios de la tabla materia_prima
-$sql = "select id, codigo_barra, descripcion, cantidad, fecha_lote, fecha_ingreso, fecha_vencimiento, 
-contenido_neto, marca from materia_prima";
+$sql = "select mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.marca,
+        IFNULL(SUM(imp.cantidad), 0) AS cantidad, MAX(imp.fecha_lote) AS fecha_lote,
+        MAX(imp.fecha) AS fecha_ingreso, MAX(imp.fecha_vencimiento) AS fecha_vencimiento
+        FROM materia_prima mp
+        LEFT JOIN ingreso_materia_prima imp ON mp.id = imp.id_materia_prima
+        GROUP BY mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.marca
+        ORDER BY mp.descripcion ASC";
 
 // Ejecuta la consulta y almacena el resultado
 $resultado = $connection->query($sql);
@@ -113,11 +118,11 @@ $resultado = $connection->query($sql);
                                 <td><?= $fila['fecha_lote'] ?></td>
                                 <td><?= $fila['fecha_ingreso'] ?></td>
                                 <td><?= $fila['fecha_vencimiento'] ?></td>
-                                <td><?= $fila['contenido_neto'] ?></td>
-                                <td><?= $fila['marca'] ?></td>
+                                <td><?= htmlspecialchars($fila['contenido_neto']) ?></td>
+                                <td><?= htmlspecialchars($fila['marca']) ?></td>
                                 <td>
                                     <a href="materia_prima.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
-                                    <a href="materiaprima_eliminar.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este registro?')">Eliminar</a>
+                                    <a href="materiaprima_baja.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-danger">Dar de Baja</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
