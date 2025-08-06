@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Registrar baja en salida_materia_prima
     $sql_salida = "INSERT INTO salida_materia_prima (id_materia_prima, cantidad, id_motivo, fecha_salida) VALUES (?, ?, ?, NOW())";
-    $stmt_salida = $connection->prepare($sql_salida);
+    $stmt_salida = $conexion->prepare($sql_salida);
     $stmt_salida->bind_param("idi", $id_materia, $cantidad_baja, $id_motivo);
     $stmt_salida->execute();
     $stmt_salida->close();
@@ -43,12 +43,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Actualizar cantidad en materia_prima
     $nueva_cantidad = $cantidad_actual - $cantidad_baja;
     $sql_update = "UPDATE materia_prima SET cantidad = ? WHERE id = ?";
-    $stmt_update = $connection->prepare($sql_update);
+    $stmt_update = $conexion->prepare($sql_update);
     $stmt_update->bind_param("di", $nueva_cantidad, $id_materia);
     $stmt_update->execute();
     $stmt_update->close();
 
-    $connection->close();
+    $conexion->close();
 
     header("Location: materiaprima_lista.php?ok=baja_registrada");
     exit;

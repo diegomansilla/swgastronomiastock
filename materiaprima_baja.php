@@ -11,7 +11,7 @@ if ($id <= 0) {
 
 // Obtener datos de la materia prima
 $sql = "SELECT * FROM materia_prima WHERE id = ?";
-$stmt = $connection->prepare($sql);
+$stmt = $conexion->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $resultado = $stmt->get_result();
@@ -26,58 +26,65 @@ if (!$materia) {
 
 // Obtener los motivos
 $motivos_sql = "SELECT id, descripcion FROM motivos";
-$motivos_result = $connection->query($motivos_sql);
+$motivos_result = $conexion->query($motivos_sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Dar de Baja Materia Prima</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
+
+<?php
+include 'includes/header.php';
+?>
+
 <body class="d-flex flex-column min-vh-100">
 
-<div class="container mt-5 mb-5">
-    <h2 class="text-center mb-4">Dar de Baja Materia Prima</h2>
+    <div class="container mt-5 mb-5">
+        <h2 class="text-center mb-4">Dar de Baja Materia Prima</h2>
 
-    <form action="materiaprima_baja_guardar.php" method="POST">
-        <input type="hidden" name="id_materia_prima" value="<?= $materia['id'] ?>">
+        <form action="materiaprima_baja_guardar.php" method="POST">
+            <input type="hidden" name="id_materia_prima" value="<?= $materia['id'] ?>">
 
-        <div class="mb-3">
-            <label class="form-label">Descripción</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($materia['descripcion']) ?>" readonly>
-        </div>
+            <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                <input type="text" class="form-control" value="<?= htmlspecialchars($materia['descripcion']) ?>" readonly>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Marca</label>
-            <input type="text" class="form-control" value="<?= htmlspecialchars($materia['marca']) ?>" readonly>
-        </div>
+            <div class="mb-3">
+                <label class="form-label">Marca</label>
+                <input type="text" class="form-control" value="<?= htmlspecialchars($materia['marca']) ?>" readonly>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Cantidad a dar de baja</label>
-            <input type="number" class="form-control" name="cantidad_baja" required min="1" step="0.1">
-        </div>
+            <div class="mb-3">
+                <label class="form-label">Cantidad a dar de baja</label>
+                <input type="number" class="form-control" name="cantidad_baja" required min="1" step="0.1">
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Motivo de baja</label>
-            <select name="id_motivo" class="form-select" required>
-                <option value="">Seleccione un motivo</option>
-                <?php while ($motivo = $motivos_result->fetch_assoc()): ?>
-                    <option value="<?= $motivo['id'] ?>"><?= htmlspecialchars($motivo['descripcion']) ?></option>
-                <?php endwhile; ?>
-            </select>
-        </div>
+            <div class="mb-3">
+                <label class="form-label">Motivo de baja</label>
+                <select name="id_motivo" class="form-select" required>
+                    <option value="">Seleccione un motivo</option>
+                    <?php while ($motivo = $motivos_result->fetch_assoc()): ?>
+                        <option value="<?= $motivo['id'] ?>"><?= htmlspecialchars($motivo['descripcion']) ?></option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
 
-        <button type="submit" class="btn btn-danger">Confirmar baja</button>
-        <a href="materiaprima_lista.php" class="btn btn-secondary">Cancelar</a>
-    </form>
-</div>
+            <button type="submit" class="btn btn-danger">Confirmar baja</button>
+            <a href="materiaprima_lista.php" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
 
-<footer class="bg-dark text-white text-center py-3 mt-auto">
-    &copy; <?= date('Y'); ?> Diseño y desarrollo por 3er año de la Tecnicatura Superior en Análisis y Desarrollo de Software en conjunto con la Tecnicatura Superior en Gastronomía.
-</footer>
+    <?php
+    include 'includes/footer.php';
+    ?>
 
-<script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
