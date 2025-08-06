@@ -11,7 +11,7 @@ if ($id <= 0) {
 
 // Obtener datos de la materia prima
 $sql = "SELECT * FROM materia_prima WHERE id = ?";
-$stmt = $connection->prepare($sql);
+$stmt = $conexion->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $resultado = $stmt->get_result();
@@ -26,7 +26,7 @@ if (!$materia) {
 
 // Obtener los motivos
 $motivos_sql = "SELECT id, descripcion FROM motivos";
-$motivos_result = $connection->query($motivos_sql);
+$motivos_result = $conexion->query($motivos_sql);
 ?>
 
 <!DOCTYPE html>

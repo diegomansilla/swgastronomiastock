@@ -12,7 +12,7 @@ $sql = "select mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.mar
         ORDER BY mp.descripcion ASC";
 
 // Ejecuta la consulta y almacena el resultado
-$resultado = $connection->query($sql);
+$resultado = $conexion->query($sql);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -92,7 +92,7 @@ $resultado = $connection->query($sql);
                             <td colspan="9" class="text-center">No hay materias primas registradas.</td>
                         </tr>
                     <?php endif; ?>
-                    <?php $connection->close(); ?>
+                    <?php $conexion->close(); ?>
                 </tbody>
             </table>
 

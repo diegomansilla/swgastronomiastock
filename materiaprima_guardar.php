@@ -31,38 +31,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql_mp = "INSERT INTO materia_prima
         (codigo_barra, descripcion, contenido_neto, marca, id_usuario, stock_minimo)
         VALUES (?,?,?,?,?,?)";
-        $stmt1 = $connection->prepare($sql_mp);
+        $stmt1 = $conexion->prepare($sql_mp);
         $stmt1->bind_param("sssisi", $cod_barra, $descript, $cont_neto, $marca, $id_usuario, $stock_minimo);
         if ($stmt1->execute()) {
-            $id_materia_prima = $connection->insert_id; // Obtener el ID para usar en la otra tabla
+            $id_materia_prima = $conexion->insert_id; // Obtener el ID para usar en la otra tabla
 
             //Insertar en Ingreso Materia Prima
             $sql_ing = "INSERT INTO ingreso_materia_prima
             (id_materia_prima, fecha, cantidad, fecha_lote, fecha_vencimiento, id_usuario)
             VALUES (?,?,?,?,?,?)";
 
-            $stmt2 = $connection->prepare($sql_ing);
+            $stmt2 = $conexion->prepare($sql_ing);
             $stmt2->bind_param("isdssi", $id_materia_prima, $fcha_ing, $cant, $fcha_lote, $fcha_vto, $id_usuario);
 
             if ($stmt2->execute()){
                 //Si esta todo OK
                 $stmt2->close();
                 $stmt1->close();
-                $connection->close();
+                $conexion->close();
                 header("Location: materiaprima_lista.php?ok=1");
                 exit;
             }else{
                 //Error en ingreso
                 $stmt2->close();
                 $stmt1->close();
-                $connection->close();
+                $conexion->close();
                 header("Location: materia_prima.php?error=ingreso");
                 exit;
             }
         } else {
             // Error al guardar materia_prima
             $stmt1->close();
-            $connection->close();
+            $conexion->close();
             header("Location: materia_prima.php?error=materia");
             exit;
         }
