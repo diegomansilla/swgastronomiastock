@@ -31,8 +31,8 @@
             Stock
           </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="ingredientes.php">Ver Ingredientes</a></li>
-                            <li><a class="dropdown-item" href="nuevo_ingrediente.php">Agregar Ingrediente</a></li>
+                            <li><a class="dropdown-item" href="materiaprima_lista.php">Ver Ingredientes</a></li>
+                            <li><a class="dropdown-item" href="materia_prima.php">Agregar Ingrediente</a></li>
                         </ul>
                     </li>
 
@@ -69,7 +69,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Ingredientes</h5>
                         <p class="card-text">Ver el listado de ingredientes cargados en stock.</p>
-                        <a href="ingredientes.php" class="btn btn-primary">Ver Ingredientes</a>
+                        <a href="materiaprima_lista.php" class="btn btn-primary">Ver Ingredientes</a>
                     </div>
                 </div>
             </div>
@@ -80,7 +80,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Nuevo Ingrediente</h5>
                         <p class="card-text">Agregar un nuevo ingrediente al sistema.</p>
-                        <a href="nuevo_ingrediente.php" class="btn btn-success">Agregar Ingrediente</a>
+                        <a href="materia_prima.php" class="btn btn-success">Agregar Ingrediente</a>
                     </div>
                 </div>
             </div>
