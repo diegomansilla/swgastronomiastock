@@ -7,7 +7,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $_GET['id'];// ID del registro a eliminar
 
     $sql = "DELETE FROM materia_prima WHERE id = ?";
-    $stmt = $connection->prepare($sql);
+    $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id);// Vincula el parámetro ID a la consulta preparada
 
     // Ejecuta la consulta preparada
@@ -16,12 +16,12 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     // Si no se pasa un ID válido, redirige a la lista de materias primas
     if ($stmt->execute()) {
         $stmt->close();
-        $connection->close();
+        $conexion->close();
         header("Location: materiaprima_lista.php?ok=eliminado");
         exit;
     }else{
         $stmt->close();
-        $connection->close();
+        $conexion->close();
         header("Location: materiaprima_lista.php?error=delete");
         exit;
     }

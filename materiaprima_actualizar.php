@@ -25,19 +25,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 marca = ? 
                 WHERE id = ?";
 
-                $stmt = $connection->prepare($sql);
+                $stmt = $conexion->prepare($sql);
                 $stmt->bind_param("ssssi", $codigo_barra, $descripcion, $contenido_neto, $marca, $id);// Vincula los parámetros a la consulta preparada
 
                if ($stmt->execute()) {
                 $stmt->close();// Cierra la sentencia preparada
                 // Cierra la conexión a la base de datos
                 // Redirige a la lista de materias primas con un mensaje de éxito
-                $connection->close();
+                $conexion->close();
                 header("Location: materiaprima_lista.php?ok=editado");
                 exit;
             } else {
                 $stmt->close();
-                $connection->close();// Cierra la conexión a la base de datos
+                $conexion->close();// Cierra la conexión a la base de datos
                 header("Location: materia_prima.php?error=update&id=$id");// Redirige a la página de edición con un mensaje de error
                 exit;
             }
