@@ -13,23 +13,23 @@ $datos = [
 ];
 
 // Si se está editando, se obtienen los datos de la base de datos
-if (isset($_GET['id'])){
-    $edicion = true;// Se está editando un registro
-    $id = $_GET['id'];// ID del registro a editar
+if (isset($_GET['id'])) {
+    $edicion = true; // Se está editando un registro
+    $id = $_GET['id']; // ID del registro a editar
 
     $sql = "SELECT id, codigo_barra, descripcion, contenido_neto, marca FROM materia_prima WHERE id = ?";
-    $stmt = $connection->prepare($sql);// Preparar la consulta
-    $stmt->bind_param("i", $id);// Vincular el parámetro ID
-    $stmt->execute();// Ejecutar la consulta
-    $resultado = $stmt->get_result();// Obtener el resultado
+    $stmt = $conexion->prepare($sql); // Preparar la consulta
+    $stmt->bind_param("i", $id); // Vincular el parámetro ID
+    $stmt->execute(); // Ejecutar la consulta
+    $resultado = $stmt->get_result(); // Obtener el resultado
 
     // Verificar si se encontraron resultados
     // Si hay resultados, se llenan los datos del formulario con los datos de la base de datos
     // Si no hay resultados, redirigir a la lista de materias primas con un error
     if ($resultado->num_rows > 0) {
-        $datos = $resultado->fetch_assoc();// Obtener los datos del registro
+        $datos = $resultado->fetch_assoc(); // Obtener los datos del registro
     } else {
-        header("Location:materiaprima_lista.php?error=notfound");// Redirigir a la lista de materias primas con un error
+        header("Location:materiaprima_lista.php?error=notfound"); // Redirigir a la lista de materias primas con un error
         exit;
     }
     $stmt->close();
@@ -49,48 +49,9 @@ if (isset($_GET['id'])){
 
 <body class="d-flex flex-column min-vh-100">
 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">Gastronomía</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-
-                <ul class="navbar-nav me-auto">
-                    <!-- Sección: Stock -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="stockDropdown" role="button" data-bs-toggle="dropdown">
-                            Stock
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="ingredientes.php">Ver Ingredientes</a></li>
-                            <li><a class="dropdown-item" href="nuevo_ingrediente.php">Agregar Ingrediente</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Sección: Platos -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="platosDropdown" role="button" data-bs-toggle="dropdown">
-                            Platos
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="platos.php">Ver Platos</a></li>
-                            <li><a class="dropdown-item" href="nuevo_plato.php">Crear Plato</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Sección: Alertas -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="alertas.php">Alertas</a>
-                    </li>
-                </ul>
-
-                <!-- Se puede agregar mas botones como "Login" o "Cerrar sesión" -->
-            </div>
-        </div>
-    </nav>
+    <?php
+    include 'includes/header.php';
+    ?>
 
     <!-- CONTENIDO PRINCIPAL -->
     <div class="container mt-5 mb-5 flex-grow-1">
@@ -112,7 +73,7 @@ if (isset($_GET['id'])){
         <form action="<?= $edicion ? 'materiaprima_actualizar.php' : 'materiaprima_guardar.php' ?>" method="POST">
             <?php if ($edicion): ?>
                 <input type="hidden" name="id" value="<?= $datos['id'] ?>">
-                <?php endif; ?>
+            <?php endif; ?>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div class="col-sm-6">
                     <label for="cod_barra" class="form-label">Código de Barra</label>
@@ -140,11 +101,9 @@ if (isset($_GET['id'])){
         </form>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        &copy;
-        <?php echo date('Y'); ?> Diseño y desarrollo por 3er año de la Tecnicatura Superior en Análisis y Desarrollo de Software en conjunto con la Tecnicatura Superior en Gastronomía.
-    </footer>
+    <?php
+    include 'includes/footer.php';
+    ?>
 
     <script src='js/bootstrap.bundle.min.js'></script>
 </body>

@@ -16,7 +16,7 @@ if (isset($_GET['id'])){
     $id = $_GET['id'];// ID del registro a editar
 
     $sql = "SELECT nombre, descripcion, codigo_barra FROM ABM_Motivos WHERE id = ?";
-    $stmt = $connection->prepare($sql);// Preparar la consulta
+    $stmt = $conexion->prepare($sql);// Preparar la consulta
     $stmt->bind_param("i", $id);// Vincular el parámetro ID
     $stmt->execute();// Ejecutar la consulta
     $resultado = $stmt->get_result();// Obtener el resultado
