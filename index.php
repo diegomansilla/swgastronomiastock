@@ -8,8 +8,9 @@
     <title>Sistema Gestión de Stock Software - Gastronomía</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' href='css/bootstrap.min.css'>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="
+https://cdn.jsdelivr.net/npm/bootswatch@5.3.7/dist/morph/bootstrap.min.css
+" rel="stylesheet">
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -20,7 +21,10 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <div class="container mt-5 mb-5 flex-grow-1">
-        <h2 class="mb-4 text-center">Panel Principal</h2>
+        <div>
+            <i class="bi bi-columns-gap"></i>
+            <h2 class="mb-4 text-center">Panel Principal</h2>
+        </div>
         <div class="row row-cols-1 row-cols-md-2 g-4">
 
             <!-- Card Ingredientes -->
@@ -29,7 +33,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Ingredientes</h5>
                         <p class="card-text">Ver el listado de ingredientes cargados en stock.</p>
-                        <a href="materiaprima_lista.php" class="btn btn-primary">Ver Ingredientes</a>
+                        <a href="materiaprima_lista.php" class="btn btn-lg btn-success">Ver Ingredientes</a>
                     </div>
                 </div>
             </div>
