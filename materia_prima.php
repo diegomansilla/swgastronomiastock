@@ -1,5 +1,5 @@
 <?php
-include 'conectar.php';
+include 'conectar2.php';
 
 $edicion = false; // Variable para determinar si es una edición o un nuevo registro
 
