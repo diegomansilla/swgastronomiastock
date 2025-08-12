@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 11, 2025 at 06:47 PM
+-- Generation Time: Aug 12, 2025 at 11:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -127,9 +127,10 @@ CREATE TABLE `platos` (
 
 CREATE TABLE `salida_materia_prima` (
   `id` int(11) NOT NULL,
-  `id_despacho_plato` int(11) NOT NULL,
+  `id_despacho_plato` int(11) DEFAULT NULL,
   `id_motivo` int(11) DEFAULT NULL,
   `id_materia_prima` int(50) NOT NULL,
+  `cantidad` float NOT NULL,
   `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
 
