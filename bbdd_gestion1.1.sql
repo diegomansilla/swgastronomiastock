@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2025 at 03:01 AM
+-- Generation Time: Aug 11, 2025 at 06:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `bbdd_gestion`
+-- Database: `bbdd_gestion1`
 --
 
 -- --------------------------------------------------------
@@ -32,7 +32,6 @@ CREATE TABLE `despacho_plato` (
   `id_salida_materia_prima` int(11) NOT NULL,
   `id_platos` int(11) NOT NULL,
   `fecha` date NOT NULL,
-  `id_usuario` int(11) NOT NULL,
   `cantidad_despachada` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
 
@@ -44,8 +43,7 @@ CREATE TABLE `despacho_plato` (
 
 CREATE TABLE `ingredientes_plato` (
   `id_plato` int(11) NOT NULL,
-  `id_materia_prima` int(50) NOT NULL,
-  `id_usuario` int(11) NOT NULL
+  `id_materia_prima` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
 
 -- --------------------------------------------------------
@@ -60,9 +58,17 @@ CREATE TABLE `ingreso_materia_prima` (
   `fecha` date NOT NULL,
   `cantidad` float NOT NULL,
   `fecha_lote` date NOT NULL,
-  `fecha_vencimiento` date NOT NULL,
-  `id_usuario` int(11) NOT NULL
+  `fecha_vencimiento` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
+
+--
+-- Dumping data for table `ingreso_materia_prima`
+--
+
+INSERT INTO `ingreso_materia_prima` (`id`, `id_materia_prima`, `fecha`, `cantidad`, `fecha_lote`, `fecha_vencimiento`) VALUES
+(1, 2, '2025-08-05', 9, '2025-07-08', '2025-11-21'),
+(2, 2, '2025-08-06', 2, '2025-09-02', '2025-08-01'),
+(3, 3, '2025-08-06', 2, '0000-00-00', '2025-07-05');
 
 -- --------------------------------------------------------
 
@@ -76,10 +82,18 @@ CREATE TABLE `materia_prima` (
   `descripcion` varchar(200) NOT NULL,
   `contenido_neto` varchar(200) NOT NULL COMMENT 'unidad de medida',
   `marca` varchar(200) NOT NULL,
-  `id_usuario` int(11) NOT NULL,
   `stock_minimo` double NOT NULL,
   `stock_maximo` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
+
+--
+-- Dumping data for table `materia_prima`
+--
+
+INSERT INTO `materia_prima` (`id`, `codigo_barra`, `descripcion`, `contenido_neto`, `marca`, `stock_minimo`, `stock_maximo`) VALUES
+(2, '123412451123', 'Harina 0000', '500g', 'X', 10, 50),
+(3, '123235325', 'Maple de huevos', '2kg', 'Huevo Feliz', 5, 20),
+(4, '144325346363', 'Caja de tomate', '125g', 'Tomatito', 5, 15);
 
 -- --------------------------------------------------------
 
@@ -89,8 +103,7 @@ CREATE TABLE `materia_prima` (
 
 CREATE TABLE `motivos` (
   `id` int(11) NOT NULL,
-  `descripcion` varchar(200) NOT NULL,
-  `id_usuario` int(11) NOT NULL
+  `descripcion` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
 
 -- --------------------------------------------------------
@@ -102,7 +115,8 @@ CREATE TABLE `motivos` (
 CREATE TABLE `platos` (
   `id` int(11) NOT NULL,
   `descripcion` varchar(200) NOT NULL,
-  `id_usuario` int(11) NOT NULL
+  `precio` float NOT NULL,
+  `estado` int(11) NOT NULL DEFAULT 1 COMMENT '1 = activo, 0 = inactivo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
 
 -- --------------------------------------------------------
@@ -116,8 +130,7 @@ CREATE TABLE `salida_materia_prima` (
   `id_despacho_plato` int(11) NOT NULL,
   `id_motivo` int(11) DEFAULT NULL,
   `id_materia_prima` int(50) NOT NULL,
-  `fecha` date NOT NULL,
-  `id_usuario` int(11) NOT NULL COMMENT 'usuario que realizo la acción'
+  `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
 
 -- --------------------------------------------------------
@@ -132,9 +145,15 @@ CREATE TABLE `usuarios` (
   `clave` varchar(200) NOT NULL,
   `correo` varchar(200) NOT NULL,
   `estado` tinyint(1) DEFAULT 0 COMMENT '0 = usuario inactivo, 1 = usuario activo',
-  `admin` tinyint(1) DEFAULT 0 COMMENT '0 = no es admin, 1 = es admin',
-  `id_usuario` tinyint(1) DEFAULT NULL COMMENT 'La función de id_usuario en la tabla usuarios es el control de altas de usuarios y bajas de los usuarios'
+  `admin` tinyint(1) DEFAULT 0 COMMENT '0 = no es admin, 1 = es admin'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
+
+--
+-- Dumping data for table `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `nombre`, `clave`, `correo`, `estado`, `admin`) VALUES
+(1, 'Alesio', '1234', 'alesio577@gmail.com', 1, 1);
 
 --
 -- Indexes for dumped tables
@@ -144,42 +163,40 @@ CREATE TABLE `usuarios` (
 -- Indexes for table `despacho_plato`
 --
 ALTER TABLE `despacho_plato`
-  ADD KEY `id_usuario` (`id_usuario`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `id_salida_materia_prima` (`id_salida_materia_prima`);
 
 --
 -- Indexes for table `ingredientes_plato`
 --
 ALTER TABLE `ingredientes_plato`
-  ADD KEY `id_materia_prima` (`id_materia_prima`),
-  ADD KEY `id_usuario` (`id_usuario`);
+  ADD PRIMARY KEY (`id_plato`),
+  ADD KEY `id_materia_prima` (`id_materia_prima`);
 
 --
 -- Indexes for table `ingreso_materia_prima`
 --
 ALTER TABLE `ingreso_materia_prima`
-  ADD KEY `id_materia_prima` (`id_materia_prima`),
-  ADD KEY `id_usuario` (`id_usuario`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_materia_prima` (`id_materia_prima`);
 
 --
 -- Indexes for table `materia_prima`
 --
 ALTER TABLE `materia_prima`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_usuario` (`id_usuario`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `motivos`
 --
 ALTER TABLE `motivos`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_usuario` (`id_usuario`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `platos`
 --
 ALTER TABLE `platos`
-  ADD KEY `id_usuario` (`id_usuario`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `salida_materia_prima`
@@ -187,7 +204,6 @@ ALTER TABLE `platos`
 ALTER TABLE `salida_materia_prima`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_materia_prima` (`id_materia_prima`),
-  ADD KEY `id_usuario` (`id_usuario`),
   ADD KEY `id_motivo` (`id_motivo`);
 
 --
@@ -201,15 +217,39 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT for table `despacho_plato`
+--
+ALTER TABLE `despacho_plato`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `ingredientes_plato`
+--
+ALTER TABLE `ingredientes_plato`
+  MODIFY `id_plato` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `ingreso_materia_prima`
+--
+ALTER TABLE `ingreso_materia_prima`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `materia_prima`
 --
 ALTER TABLE `materia_prima`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `motivos`
 --
 ALTER TABLE `motivos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `platos`
+--
+ALTER TABLE `platos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -222,7 +262,7 @@ ALTER TABLE `salida_materia_prima`
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -232,51 +272,25 @@ ALTER TABLE `usuarios`
 -- Constraints for table `despacho_plato`
 --
 ALTER TABLE `despacho_plato`
-  ADD CONSTRAINT `despacho_plato_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
   ADD CONSTRAINT `despacho_plato_ibfk_2` FOREIGN KEY (`id_salida_materia_prima`) REFERENCES `salida_materia_prima` (`id`);
 
 --
 -- Constraints for table `ingredientes_plato`
 --
 ALTER TABLE `ingredientes_plato`
-  ADD CONSTRAINT `ingredientes_plato_ibfk_1` FOREIGN KEY (`id_materia_prima`) REFERENCES `materia_prima` (`id`),
-  ADD CONSTRAINT `ingredientes_plato_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `ingredientes_plato_ibfk_1` FOREIGN KEY (`id_materia_prima`) REFERENCES `materia_prima` (`id`);
 
 --
 -- Constraints for table `ingreso_materia_prima`
 --
 ALTER TABLE `ingreso_materia_prima`
-  ADD CONSTRAINT `ingreso_materia_prima_ibfk_1` FOREIGN KEY (`id_materia_prima`) REFERENCES `materia_prima` (`id`),
-  ADD CONSTRAINT `ingreso_materia_prima_ibfk_2` FOREIGN KEY (`id_materia_prima`) REFERENCES `materia_prima` (`id`),
-  ADD CONSTRAINT `ingreso_materia_prima_ibfk_3` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`);
-
---
--- Constraints for table `materia_prima`
---
-ALTER TABLE `materia_prima`
-  ADD CONSTRAINT `materia_prima_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`);
-
---
--- Constraints for table `motivos`
---
-ALTER TABLE `motivos`
-  ADD CONSTRAINT `motivos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`);
-
---
--- Constraints for table `platos`
---
-ALTER TABLE `platos`
-  ADD CONSTRAINT `platos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `ingreso_materia_prima_ibfk_1` FOREIGN KEY (`id_materia_prima`) REFERENCES `materia_prima` (`id`);
 
 --
 -- Constraints for table `salida_materia_prima`
 --
 ALTER TABLE `salida_materia_prima`
   ADD CONSTRAINT `salida_materia_prima_ibfk_1` FOREIGN KEY (`id_materia_prima`) REFERENCES `materia_prima` (`id`),
-  ADD CONSTRAINT `salida_materia_prima_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
-  ADD CONSTRAINT `salida_materia_prima_ibfk_3` FOREIGN KEY (`id_materia_prima`) REFERENCES `materia_prima` (`id`),
-  ADD CONSTRAINT `salida_materia_prima_ibfk_4` FOREIGN KEY (`id_materia_prima`) REFERENCES `materia_prima` (`id`),
-  ADD CONSTRAINT `salida_materia_prima_ibfk_5` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
   ADD CONSTRAINT `salida_materia_prima_ibfk_6` FOREIGN KEY (`id_motivo`) REFERENCES `motivos` (`id`);
 COMMIT;
 
