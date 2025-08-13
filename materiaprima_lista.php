@@ -1,5 +1,5 @@
 <?php
-include 'conectar.php'; // Incluye el archivo de conexión a la base de datos
+include 'conectar2.php'; // Incluye el archivo de conexión a la base de datos
 
 // Consulta para obtener todas las materias primas
 // Se seleccionan los campos necesarios de la tabla materia_prima
