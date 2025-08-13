@@ -6,13 +6,12 @@ include 'conectar2.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cod_barra = $_POST['cod_barra'];
     $descript = $_POST['descript'];
-    $cant = $_POST['cant'];
     $fcha_lote = $_POST['fcha_lote'];
     $fcha_ing = $_POST['fcha_ing'];
     $fcha_vto = $_POST['fcha_vto'];
     $cont_neto = $_POST['cont_neto'];
     $marca = $_POST['marca'];
-    $id_usuario = 1;
+    //$id_usuario = 1;
     $stock_minimo = 1.0;
 
     // Verifica si todos los campos requeridos están llenos
@@ -20,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (
         !empty($cod_barra) &&
         !empty($descript) &&
-        !empty($cant) &&
         !empty($fcha_lote) &&
         !empty($fcha_ing) &&
         !empty($fcha_vto) &&
@@ -29,20 +27,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ) {
         // Insertar en Materia Prima
         $sql_mp = "INSERT INTO materia_prima
-        (codigo_barra, descripcion, contenido_neto, marca, id_usuario, stock_minimo)
-        VALUES (?,?,?,?,?,?)";
+        (codigo_barra, descripcion, contenido_neto, marca, stock_minimo)
+        VALUES (?,?,?,?,?)";
         $stmt1 = $conexion->prepare($sql_mp);
-        $stmt1->bind_param("sssisi", $cod_barra, $descript, $cont_neto, $marca, $id_usuario, $stock_minimo);
+        $stmt1->bind_param("ssssi", $cod_barra, $descript, $cont_neto, $marca, $stock_minimo);
         if ($stmt1->execute()) {
             $id_materia_prima = $conexion->insert_id; // Obtener el ID para usar en la otra tabla
 
             //Insertar en Ingreso Materia Prima
             $sql_ing = "INSERT INTO ingreso_materia_prima
-            (id_materia_prima, fecha, cantidad, fecha_lote, fecha_vencimiento, id_usuario)
-            VALUES (?,?,?,?,?,?)";
+            (id_materia_prima, fecha, cantidad, fecha_lote, fecha_vencimiento)
+            VALUES (?,?,?,?,?)";
 
             $stmt2 = $conexion->prepare($sql_ing);
-            $stmt2->bind_param("isdssi", $id_materia_prima, $fcha_ing, $cant, $fcha_lote, $fcha_vto, $id_usuario);
+            $stmt2->bind_param("isdss", $id_materia_prima, $fcha_ing, $cont_neto, $fcha_lote, $fcha_vto);
 
             if ($stmt2->execute()){
                 //Si esta todo OK

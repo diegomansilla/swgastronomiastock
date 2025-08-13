@@ -105,18 +105,18 @@ if (isset($_GET['id'])) {
                 </div>
                 <!-- NUEVOS CAMPOS DE FECHAS -->
                 <div class="col-sm-6">
-                    <label for="fecha" class="form-label">Fecha</label>
-                    <input type="date" class="form-control" id="fecha" name="fecha"
+                    <label for="fecha" class="form-label">Fecha de Ingreso</label>
+                    <input type="date" class="form-control" id="fcha_ing" name="fcha_ing"
                         value="<?= htmlspecialchars($datos['fecha']) ?>" required>
                 </div>
                 <div class="col-sm-6">
                     <label for="fecha_lote" class="form-label">Fecha de Lote</label>
-                    <input type="date" class="form-control" id="fecha_lote" name="fecha_lote"
+                    <input type="date" class="form-control" id="fcha_lote" name="fcha_lote"
                         value="<?= htmlspecialchars($datos['fecha_lote']) ?>" required>
                 </div>
                 <div class="col-sm-6">
                     <label for="fecha_vencimiento" class="form-label">Fecha de Vencimiento</label>
-                    <input type="date" class="form-control" id="fecha_vencimiento" name="fecha_vencimiento"
+                    <input type="date" class="form-control" id="fcha_vto" name="fcha_vto"
                         value="<?= htmlspecialchars($datos['fecha_vencimiento']) ?>" required>
 
                 </div>
