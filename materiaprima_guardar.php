@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';
+include 'conectar.php.php';
 
 // Verifica si lo que se trae es por POST
 // Si es así, se procede a guardar los datos en la base de datos

@@ -1,8 +1,6 @@
 <?php
-include("conectar2.php");
+include("conectar.php");
 
-// Aquí deberías obtener el ID de usuario real de sesión o fijo para pruebas
-$id_usuario = 1; // Cambia esto según tu lógica
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre = $conexion->real_escape_string($_POST["nombre"]);
@@ -10,27 +8,43 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $disponible = intval($_POST["disponible"]);
     $materia_prima = $_POST["materia_prima"] ?? [];
 
-    // Insertar plato
-    $conexion->query("INSERT INTO platos (nombre, precio, disponible, id_usuario) 
-                      VALUES ('$nombre', $precio, $disponible, '$id_usuario')");
+      // Validar datos básicos
+    if (empty($nombre) || empty($precio)) {
+        die("El nombre y el precio son obligatorios.");
+    }
 
-    if ($conexion->error) {
+  // Insertar plato
+    $sql_plato = "INSERT INTO platos (nombre, precio, disponible) VALUES ('$nombre', $precio, $disponible)";
+    
+    // Ejecutar la inserción del plato y verificar si fue exitosa
+    if ($conexion->query($sql_plato)) {
+        // Si el plato se insertó correctamente, obtenemos su ID
+        $plato_id = $conexion->insert_id;
+
+        // Ahora, recorremos e insertamos las materias primas
+        foreach ($materia_prima as $id_mp => $data) {
+            // Verificamos que el checkbox esté marcado y la cantidad no esté vacía
+            if (isset($data["check"]) && $data["check"] == "1" && !empty($data["cantidad"])) {
+                $cantidad = $conexion->real_escape_string($data["cantidad"]);
+                
+                $sql_ingrediente = "INSERT INTO ingredientes_plato (id_plato, id_materia_prima, cantidad) VALUES ($plato_id, $id_mp, '$cantidad')";
+                
+                // Ejecutamos la inserción del ingrediente
+                if (!$conexion->query($sql_ingrediente)) {
+                    // Manejar el error de inserción del ingrediente, si es necesario
+                    // Por ejemplo, puedes registrar el error y continuar
+                    error_log("Error al insertar ingrediente $id_mp para el plato $plato_id: " . $conexion->error);
+                }
+            }
+        }
+        // Redireccionamos solo si todo salió bien con la inserción del plato
+        header("Location: platos.php?mensaje=Plato agregado");
+        exit();
+
+    } else {
+        // Manejar el error si la inserción del plato falla
         die("Error al insertar plato: " . $conexion->error);
     }
-
-    $plato_id = $conexion->insert_id;
-
-    // Insertar materias primas seleccionadas
-    foreach ($materia_prima as $id_mp => $data) {
-        if (isset($data["check"]) && $data["check"] == "1" && !empty($data["cantidad"])) {
-            $cantidad = $conexion->real_escape_string($data["cantidad"]);
-            $conexion->query("INSERT INTO plato_materia_prima (plato_id, materia_prima_id, cantidad) 
-                              VALUES ($plato_id, $id_mp, '$cantidad')");
-        }
-    }
-
-    header("Location: platos.php?mensaje=Plato agregado");
-    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -44,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
 <div class="container mt-5">
     <div class="card shadow-sm">
-        <div class="card-header bg- text-black text-center">
+     <div class="card-header bg-success text-white text-center ">
             <h2 class="mb-0">🧑‍🍳 Agregar Nuevo Plato</h2>
         </div>
         <div class="card-body">
@@ -71,9 +85,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <h4 class="mt-4 mb-3">📝 Seleccione los ingredientes</h4>
 
                 <?php
-                $res = $conexion->query("SELECT id, descripcion, contenido_neto, 'unidad_medida', marca FROM materia_prima");
+                $res = $conexion->query("SELECT id, descripcion, contenido_neto, marca FROM materia_prima");
                 while ($mp = $res->fetch_assoc()) {
-                    $texto = $mp['descripcion'] . " (" . $mp['contenido_neto'] . " " . $mp['unidad_medida'] . ") - " . $mp['marca'];
+                    $texto = $mp['descripcion'] . " (" . $mp['contenido_neto'] . ") - " . $mp['marca'];
                     echo '<div class="form-check mb-2">';
                     echo '<input class="form-check-input" type="checkbox" name="materia_prima['.$mp['id'].'][check]" value="1" id="mp'.$mp['id'].'">';
                     echo '<label class="form-check-label" for="mp'.$mp['id'].'">'.$texto.'</label>';
@@ -83,6 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ?>
 
                 <button type="submit" class="btn btn-success mt-3">Guardar plato</button>
+                <a href="platos.php" class="btn btn-secondary mt-3">Cancelar</a>
             </form>
         </div>
     </div>

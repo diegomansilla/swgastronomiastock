@@ -8,9 +8,7 @@
     <title>Sistema Gestión de Stock Software - Gastronomía</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' href='css/bootstrap.min.css'>
-    <link href="
-https://cdn.jsdelivr.net/npm/bootswatch@5.3.7/dist/morph/bootstrap.min.css
-" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.7/dist/morph/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="d-flex flex-column min-vh-100">

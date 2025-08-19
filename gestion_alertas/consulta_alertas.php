@@ -1,5 +1,5 @@
 <?php
-include_once('../conectar2.php');
+include_once('../conectar.php.php');
 
 $alertas = [];
 

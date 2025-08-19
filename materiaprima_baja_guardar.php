@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';
+include 'conectar.php.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_materia = isset($_POST['id_materia_prima']) ? intval($_POST['id_materia_prima']) : 0;

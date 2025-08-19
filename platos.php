@@ -1,4 +1,4 @@
-<?php include("conectar2.php"); ?>
+<?php include("conectar.php"); ?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -18,11 +18,13 @@
 
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    
 </head>
 <body class="container mt-4">
-
-    <h1 class="mb-4">Listado de Platos</h1>
+  <div class="card shadow-sm">
+     <div class="card-header bg-success text-white text-center ">
+            <h2 class="mb-0">Listado de Platos</h2>
+        </div>
 
 
     <table id="tablaPlatos" class="table table-striped table-bordered">
@@ -56,7 +58,11 @@
             ?>
         </tbody>
     </table>
-    <a href="agregar.php" class="btn btn-success mb-3">Agregar nuevo plato</a>
+    <div class="row">
+    <div class="col-sm-4">
+        <a href="agregar.php" class="btn btn-success mb-3">Agregar nuevo plato</a>
+    </div>
+</div>
     <script src='script.js'></script>
 </body>
 </html>

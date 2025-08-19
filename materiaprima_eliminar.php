@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';
+include 'conectar.php.php';
 
 // Verifica si se ha pasado un ID válido por GET
 // Si el ID es numérico, se procede a eliminar el registro

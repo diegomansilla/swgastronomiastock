@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';
+include 'conectar.php.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 

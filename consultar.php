@@ -1,15 +1,21 @@
 <?php
-include("conectar2.php");
-$plato
+include("conectar.php");
+
 $id_plato = intval($_GET['id']); // ID recibido por GET
 
-$sql = " SELECT mp.descripcion, mp.contenido_neto, mp.marca, ip.cantidad
-FROM ingredientes_plato ip
-INNER JOIN materia_prima mp 
-    ON ip.id_materia_prima = mp.id
-WHERE ip.id_plato = $id_plato
+// Obtener datos del plato
+$sqlPlato = "SELECT nombre, precio, disponible FROM platos WHERE id = $id_plato";
+$resPlato = $conexion->query($sqlPlato);
+$plato = $resPlato->fetch_assoc();
+
+// Obtener ingredientes del plato
+$sqlIngredientes = "
+     SELECT mp.descripcion, mp.contenido_neto, mp.marca, ip.cantidad
+    FROM ingredientes_plato ip
+    INNER JOIN materia_prima mp ON ip.id_materia_prima = mp.id
+    WHERE ip.id_plato = $id_plato
 ";
-$result = $conexion->query($sql);
+$ingredientes = $conexion->query($sqlIngredientes);
 ?>
 
 <!DOCTYPE html>
@@ -19,21 +25,34 @@ $result = $conexion->query($sql);
     <title>Detalle del Plato</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container mt-4">
-    <h2>Detalle del plato</h1>
-    <p><strong>Nombre:</strong> <?= htmlspecialchars($plato['nombre']) ?></p>
-    <p><strong>Precio:</strong> $<?= number_format($plato['precio'], 2) ?></p>
-    <p><strong>Disponible:</strong> <?= $plato['disponible'] ? 'Sí' : 'No' ?></p>
+<div class="container mt-5">
+    <div class="card shadow-sm">
+     <div class="card-header bg-success text-white text-center ">
+            <h2 class="mb-0">🧑‍🍳 Detalle del Plato</h2>
+        </div>
+
+    <?php if ($plato): ?>
+        <p><strong>Nombre:</strong> <?= htmlspecialchars($plato['nombre']) ?></p>
+        <p><strong>Precio:</strong> $<?= number_format($plato['precio'], 2) ?></p>
+        <p><strong>Disponible:</strong> <?= $plato['disponible'] ? 'Sí' : 'No' ?></p>
+    <?php else: ?>
+        <div class="alert alert-danger">No se encontró el plato.</div>
+    <?php endif; ?>
 
     <h4>Ingredientes:</h4>
-    <ul class="list-group">
-        <?php while ($row = $ingredientes->fetch_assoc()): ?>
-            <li class="list-group-item">
-                <?= htmlspecialchars($row['descripcion']) ?> (<?= $row['contenido_neto'] . " " . $row['unidad_medida'] ?>) - <?= htmlspecialchars($row['marca']) ?> | Cantidad: <?= htmlspecialchars($row['cantidad']) ?>
-            </li>
-        <?php endwhile; ?>
-    </ul>
-
-    <a href="platos.php" class="btn btn-secondary mt-3">Volver</a>
+   <ul class="list-group">
+    <?php while ($row = $ingredientes->fetch_assoc()): ?>
+        <li class="list-group-item">
+            <?= htmlspecialchars($row['descripcion']) ?>
+            (<?= $row['contenido_neto'] ?>) -
+            <?= htmlspecialchars($row['marca']) ?> |
+            Cantidad: <?= htmlspecialchars($row['cantidad']) ?>
+        </li>
+    <?php endwhile; ?>
+</ul>
+<div class="row">
+    <div class="col-sm-4">
+        <a href="platos.php" class="btn btn-success mt-3">Volver</a>
+</div>
 </body>
 </html>
