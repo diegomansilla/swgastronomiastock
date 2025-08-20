@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';//Incluye en archivo de conexion a base de datos
+include 'conectar.php';//Incluye en archivo de conexion a base de datos
 
 //Consulta si lo que se trae es por POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

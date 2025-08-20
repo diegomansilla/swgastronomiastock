@@ -1,15 +1,17 @@
 <?php
-include 'conectar2.php'; // Incluye el archivo de conexión a la base de datos
+include 'conectar.php'; // Incluye el archivo de conexión a la base de datos
 
 // Consulta para obtener todas las materias primas
 // Se seleccionan los campos necesarios de la tabla materia_prima
-$sql = "select mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.marca,
-        IFNULL(SUM(imp.cantidad), 0) AS cantidad, MAX(imp.fecha_lote) AS fecha_lote,
-        MAX(imp.fecha) AS fecha_ingreso, MAX(imp.fecha_vencimiento) AS fecha_vencimiento
-        FROM materia_prima mp
-        LEFT JOIN ingreso_materia_prima imp ON mp.id = imp.id_materia_prima
-        GROUP BY mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.marca
-        ORDER BY mp.descripcion ASC";
+$sql = "SELECT mp.id, mp.codigo_barra,
+        mp.descripcion,
+        mp.contenido_neto,
+        mp.marca, i.fecha_lote, i.fecha,i.fecha_vencimiento,
+        COALESCE(SUM(i.cantidad),0) - COALESCE(SUM(s.cantidad),0) AS cantidad
+    FROM materia_prima mp
+    LEFT JOIN ingreso_materia_prima i ON mp.id = i.id_materia_prima
+    LEFT JOIN salida_materia_prima s ON mp.id = s.id_materia_prima
+    GROUP BY mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.marca";
 
 // Ejecuta la consulta y almacena el resultado
 $resultado = $conexion->query($sql);
@@ -28,17 +30,57 @@ $resultado = $conexion->query($sql);
 <body class="d-flex flex-column min-vh-100">
 
     <?php if (isset($_GET['ok']) && $_GET['ok'] == 'editado'): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            ✅ Materia prima actualizada correctamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <!-- Modal de Éxito -->
+        <div class="modal fade" id="modalOk" tabindex="-1" aria-labelledby="modalOkLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-success text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalOkLabel">✅ Éxito. Materia Prima actualizada correctamente</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Materia prima guardada correctamente.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var modalOk = new bootstrap.Modal(document.getElementById('modalOk'));
+                modalOk.show();
+            });
+        </script>
     <?php endif; ?>
 
     <?php if (isset($_GET['ok']) && $_GET['ok'] == 'eliminado'): ?>
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            ⚠️ Materia prima eliminada correctamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <!-- Modal de Éxito -->
+        <div class="modal fade" id="modalOk" tabindex="-1" aria-labelledby="modalOkLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-success text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalOkLabel">⚠️ Éxito. Materia Prima eliminada correctamente</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Materia prima eliminada correctamente.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var modalOk = new bootstrap.Modal(document.getElementById('modalOk'));
+                modalOk.show();
+            });
+        </script>
     <?php endif; ?>
 
     <?php
@@ -77,7 +119,7 @@ $resultado = $conexion->query($sql);
                                 <td><?= $fila['descripcion'] ?></td>
                                 <td><?= $fila['cantidad'] ?></td>
                                 <td><?= $fila['fecha_lote'] ?></td>
-                                <td><?= $fila['fecha_ingreso'] ?></td>
+                                <td><?= $fila['fecha'] ?></td>
                                 <td><?= $fila['fecha_vencimiento'] ?></td>
                                 <td><?= htmlspecialchars($fila['contenido_neto']) ?></td>
                                 <td><?= htmlspecialchars($fila['marca']) ?></td>
