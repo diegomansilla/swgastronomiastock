@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';
+include 'conectar.php';
 
 $edicion = false;
 
@@ -8,9 +8,10 @@ $datos = [
     'codigo_barra' => '',
     'descripcion' => '',
     'contenido_neto' => '',
+    'cantidad' => '',
     'marca' => '',
-    'stok_minimo' => '',
-    'stok_maximo' => '',
+    'stock_minimo' => '',
+    'stock_maximo' => '',
     'fecha' => '',
     'fecha_lote' => '',
     'fecha_vencimiento' => ''
@@ -21,8 +22,15 @@ if (isset($_GET['id'])) {
     $edicion = true;
     $id = $_GET['id'];
 
-    $sql = "SELECT id, codigo_barra, descripcion, contenido_neto, marca, stok_minimo, stok_maximo, fecha, fecha_lote, fecha_vencimiento 
-            FROM materia_prima WHERE id = ?";
+    $sql = "SELECT mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.marca, 
+       mp.stock_minimo, mp.stock_maximo,
+       imp.fecha, imp.cantidad, imp.fecha_lote, imp.fecha_vencimiento
+       FROM materia_prima mp
+       LEFT JOIN ingreso_materia_prima imp 
+       ON imp.id_materia_prima = mp.id
+       WHERE mp.id = ?
+       ORDER BY imp.fecha DESC
+       LIMIT 1";
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -55,21 +63,72 @@ if (isset($_GET['id'])) {
     <div class="container mt-5 mb-5 flex-grow-1">
 
         <?php if (isset($_GET['ok'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            ✅ Materia prima guardada correctamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+            <!-- Modal de Éxito -->
+            <div class="modal fade" id="modalOk" tabindex="-1" aria-labelledby="modalOkLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-success text-white">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalOkLabel">✅ Éxito. Materia prima guardada</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            Materia prima guardada correctamente.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var modalOk = new bootstrap.Modal(document.getElementById('modalOk'));
+                    modalOk.show();
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('ok');
+                        window.history.replaceState({}, document.title, url.pathname);
+                    }
+                });
+            </script>
+
         <?php elseif (isset($_GET['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            ❌ Hubo un error al guardar la materia prima.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+            <!-- Modal de Error -->
+            <div class="modal fade" id="modalError" tabindex="-1" aria-labelledby="modalErrorLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-danger text-white">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalErrorLabel">❌ Error</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            Hubo un error al guardar la materia prima.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var modalError = new bootstrap.Modal(document.getElementById('modalError'));
+                    modalError.show();
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('error');
+                        window.history.replaceState({}, document.title, url.pathname);
+                    }
+                });
+            </script>
         <?php endif; ?>
 
         <h2 class="mb-4 text-center">Materia Prima</h2>
         <form action="<?= $edicion ? 'materiaprima_actualizar.php' : 'materiaprima_guardar.php' ?>" method="POST">
             <?php if ($edicion): ?>
-            <input type="hidden" name="id" value="<?= $datos['id'] ?>">
+                <input type="hidden" name="id" value="<?= $datos['id'] ?>">
             <?php endif; ?>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div class="col-sm-6">
@@ -85,42 +144,47 @@ if (isset($_GET['id'])) {
                 <div class="col-sm-6">
                     <label for="cont_neto" class="form-label">Contenido Neto</label>
                     <input type="text" class="form-control" id="cont_neto" name="cont_neto"
-                        value="<?= htmlspecialchars($datos['contenido_neto']) ?>" required>
+                        value="<?= htmlspecialchars($datos['contenido_neto']) ?>" placeholder="Contenido Neto de la materia prima en su unidad de medida" required>
+                </div>
+                <div class="col-sm-6">
+                    <label for="cantidad" class="form-label">Cantidad</label>
+                    <input type="number" class="form-control" id="cantidad" name="cantidad"
+                        value="<?= htmlspecialchars($datos['cantidad']) ?>" placeholder="Cantidad de la materia prima" required>
                 </div>
                 <div class="col-sm-6">
                     <label for="marca" class="form-label">Marca</label>
                     <input type="text" class="form-control" id="marca" name="marca"
-                        value="<?= htmlspecialchars($datos['marca']) ?>" required>
+                        value="<?= htmlspecialchars($datos['marca']) ?>" placeholder="Marca" required>
                 </div>
                 <!-- Campos agregados -->
                 <div class="col-sm-6">
-                    <label for="stok_minimo" class="form-label">Stock Mínimo</label>
-                    <input type="number" class="form-control" id="stok_minimo" name="stok_minimo"
-                        value="<?= htmlspecialchars($datos['stok_minimo']) ?>" required>
+                    <label for="stock_minimo" class="form-label">Stock Mínimo</label>
+                    <input type="number" class="form-control" id="stock_minimo" name="stock_minimo"
+                        value="<?= htmlspecialchars($datos['stock_minimo']) ?>" required>
                 </div>
                 <div class="col-sm-6">
-                    <label for="stok_maximo" class="form-label">Stock Máximo</label>
-                    <input type="number" class="form-control" id="stok_maximo" name="stok_maximo"
-                        value="<?= htmlspecialchars($datos['stok_maximo']) ?>" required>
+                    <label for="stock_maximo" class="form-label">Stock Máximo</label>
+                    <input type="number" class="form-control" id="stock_maximo" name="stock_maximo"
+                        value="<?= htmlspecialchars($datos['stock_maximo']) ?>" required>
                 </div>
                 <!-- NUEVOS CAMPOS DE FECHAS -->
                 <div class="col-sm-6">
-                    <label for="fecha" class="form-label">Fecha</label>
-                    <input type="date" class="form-control" id="fecha" name="fecha"
+                    <label for="fecha" class="form-label">Fecha de Ingreso</label>
+                    <input type="date" class="form-control" id="fcha_ing" name="fcha_ing"
                         value="<?= htmlspecialchars($datos['fecha']) ?>" required>
                 </div>
                 <div class="col-sm-6">
                     <label for="fecha_lote" class="form-label">Fecha de Lote</label>
-                    <input type="date" class="form-control" id="fecha_lote" name="fecha_lote"
+                    <input type="date" class="form-control" id="fcha_lote" name="fcha_lote"
                         value="<?= htmlspecialchars($datos['fecha_lote']) ?>" required>
                 </div>
                 <div class="col-sm-6">
                     <label for="fecha_vencimiento" class="form-label">Fecha de Vencimiento</label>
-                    <input type="date" class="form-control" id="fecha_vencimiento" name="fecha_vencimiento"
+                    <input type="date" class="form-control" id="fcha_vto" name="fcha_vto"
                         value="<?= htmlspecialchars($datos['fecha_vencimiento']) ?>" required>
 
                 </div>
-                
+
             </div>
             <br>
             <div class="row row-cols-1 row-cols-md-2 g-4">

@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';//Incluye en archivo de conexion a base de datos
+include 'conectar.php';//Incluye en archivo de conexion a base de datos
 $edicion = false; // Variable para determinar si es una edición o un nuevo registro
 
 // Datos por defecto para el formulario
@@ -16,7 +16,7 @@ if (isset($_GET['id'])){
     $id = $_GET['id'];// ID del registro a editar
 
     $sql = "SELECT nombre, descripcion, codigo_barra FROM ABM_Motivos WHERE id = ?";
-    $stmt = $conexion->prepare($sql);// Preparar la consulta
+    $stmt = $connection->prepare($sql);// Preparar la consulta
     $stmt->bind_param("i", $id);// Vincular el parámetro ID
     $stmt->execute();// Ejecutar la consulta
     $resultado = $stmt->get_result();// Obtener el resultado

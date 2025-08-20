@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';
+include 'conectar.php';
 
 $term = isset($_GET['term']) ? trim($_GET['term'])  : '';// Termino de búsqueda
 
@@ -7,7 +7,7 @@ $sql = "SELECT id, nombre, descripcion, codigo_barra, FROM ABM_Motivos WHERE des
 
 $like = "%" . $term . "%";// Prepara el término de búsqueda con comodines
 // Prepara la consulta para evitar inyecciones SQL
-$stmt = $conexion->prepare($sql);
+$stmt = $connection->prepare($sql);
 $stmt->bind_param("sss", $like, $like, $like);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -25,6 +25,6 @@ while ($fila = $result->fetch_assoc()){
     </tr>";
 }
 $stmt->close();
-$conexion->close();
+$connection->close();
 
 ?>

@@ -1,48 +1,48 @@
 <?php
-include 'conectar2.php';
+include 'conectar.php';
 
 // Verifica si lo que se trae es por POST
 // Si es así, se procede a guardar los datos en la base de datos
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cod_barra = $_POST['cod_barra'];
     $descript = $_POST['descript'];
-    $cant = $_POST['cant'];
     $fcha_lote = $_POST['fcha_lote'];
     $fcha_ing = $_POST['fcha_ing'];
     $fcha_vto = $_POST['fcha_vto'];
     $cont_neto = $_POST['cont_neto'];
+    $cantidad = $_POST['cantidad'];
     $marca = $_POST['marca'];
-    $id_usuario = 1;
     $stock_minimo = 1.0;
+    $stock_maximo = 1.0;
 
     // Verifica si todos los campos requeridos están llenos
     // Si alguno de los campos está vacío, redirige a la página de materia prima
     if (
         !empty($cod_barra) &&
         !empty($descript) &&
-        !empty($cant) &&
         !empty($fcha_lote) &&
         !empty($fcha_ing) &&
         !empty($fcha_vto) &&
         !empty($cont_neto) &&
+        !empty($cantidad) &&
         !empty($marca)
     ) {
         // Insertar en Materia Prima
         $sql_mp = "INSERT INTO materia_prima
-        (codigo_barra, descripcion, contenido_neto, marca, id_usuario, stock_minimo)
+        (codigo_barra, descripcion, contenido_neto, marca, stock_minimo, stock_maximo)
         VALUES (?,?,?,?,?,?)";
         $stmt1 = $conexion->prepare($sql_mp);
-        $stmt1->bind_param("sssisi", $cod_barra, $descript, $cont_neto, $marca, $id_usuario, $stock_minimo);
+        $stmt1->bind_param("ssssii", $cod_barra, $descript, $cont_neto, $marca, $stock_minimo, $stock_maximo);
         if ($stmt1->execute()) {
             $id_materia_prima = $conexion->insert_id; // Obtener el ID para usar en la otra tabla
 
             //Insertar en Ingreso Materia Prima
             $sql_ing = "INSERT INTO ingreso_materia_prima
-            (id_materia_prima, fecha, cantidad, fecha_lote, fecha_vencimiento, id_usuario)
-            VALUES (?,?,?,?,?,?)";
+            (id_materia_prima, fecha, cantidad, fecha_lote, fecha_vencimiento)
+            VALUES (?,?,?,?,?)";
 
             $stmt2 = $conexion->prepare($sql_ing);
-            $stmt2->bind_param("isdssi", $id_materia_prima, $fcha_ing, $cant, $fcha_lote, $fcha_vto, $id_usuario);
+            $stmt2->bind_param("isdss", $id_materia_prima, $fcha_ing, $cantidad, $fcha_lote, $fcha_vto);
 
             if ($stmt2->execute()){
                 //Si esta todo OK

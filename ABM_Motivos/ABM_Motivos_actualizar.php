@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';//Incluye en archivo de conexion a base de datos
+include 'conectar.php';//Incluye en archivo de conexion a base de datos
 
 //Consulta si lo que se trae es por POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -23,19 +23,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 codigo_barra = ?, 
                 WHERE id = ?";
 
-                $stmt = $conexion->prepare($sql);
+                $stmt = $connection->prepare($sql);
                 $stmt->bind_param("ssdsssssi", $nombre, $descripcion, $codigo_barra, $id);// Vincula los parámetros a la consulta preparada
 
                if ($stmt->execute()) {
                 $stmt->close();// Cierra la sentencia preparada
                 // Cierra la conexión a la base de datos
                 // Redirige a la lista de materias primas con un mensaje de éxito
-                $conexion->close();
+                $connection->close();
                 header("Location: ABM_Motivos_lista.php?ok=editado");
                 exit;
             } else {
                 $stmt->close();
-                $conexion->close();// Cierra la conexión a la base de datos
+                $connection->close();// Cierra la conexión a la base de datos
                 header("Location: ABM_Motivos.php?error=update&id=$id");// Redirige a la página de edición con un mensaje de error
                 exit;
             }
