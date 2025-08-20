@@ -8,9 +8,10 @@ $datos = [
     'codigo_barra' => '',
     'descripcion' => '',
     'contenido_neto' => '',
+    'cantidad' => '',
     'marca' => '',
-    'stok_minimo' => '',
-    'stok_maximo' => '',
+    'stock_minimo' => '',
+    'stock_maximo' => '',
     'fecha' => '',
     'fecha_lote' => '',
     'fecha_vencimiento' => ''
@@ -21,8 +22,15 @@ if (isset($_GET['id'])) {
     $edicion = true;
     $id = $_GET['id'];
 
-    $sql = "SELECT id, codigo_barra, descripcion, contenido_neto, marca, stok_minimo, stok_maximo, fecha, fecha_lote, fecha_vencimiento 
-            FROM materia_prima WHERE id = ?";
+    $sql = "SELECT mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.marca, 
+       mp.stock_minimo, mp.stock_maximo,
+       imp.fecha, imp.cantidad, imp.fecha_lote, imp.fecha_vencimiento
+       FROM materia_prima mp
+       LEFT JOIN ingreso_materia_prima imp 
+       ON imp.id_materia_prima = mp.id
+       WHERE mp.id = ?
+       ORDER BY imp.fecha DESC
+       LIMIT 1";
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -55,21 +63,21 @@ if (isset($_GET['id'])) {
     <div class="container mt-5 mb-5 flex-grow-1">
 
         <?php if (isset($_GET['ok'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            ✅ Materia prima guardada correctamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                ✅ Materia prima guardada correctamente.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         <?php elseif (isset($_GET['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            ❌ Hubo un error al guardar la materia prima.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ❌ Hubo un error al guardar la materia prima.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         <?php endif; ?>
 
         <h2 class="mb-4 text-center">Materia Prima</h2>
         <form action="<?= $edicion ? 'materiaprima_actualizar.php' : 'materiaprima_guardar.php' ?>" method="POST">
             <?php if ($edicion): ?>
-            <input type="hidden" name="id" value="<?= $datos['id'] ?>">
+                <input type="hidden" name="id" value="<?= $datos['id'] ?>">
             <?php endif; ?>
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 <div class="col-sm-6">
@@ -85,23 +93,28 @@ if (isset($_GET['id'])) {
                 <div class="col-sm-6">
                     <label for="cont_neto" class="form-label">Contenido Neto</label>
                     <input type="text" class="form-control" id="cont_neto" name="cont_neto"
-                        value="<?= htmlspecialchars($datos['contenido_neto']) ?>" required>
+                        value="<?= htmlspecialchars($datos['contenido_neto']) ?>" placeholder="Contenido Neto de la materia prima en su unidad de medida" required>
+                </div>
+                <div class="col-sm-6">
+                    <label for="cantidad" class="form-label">Cantidad</label>
+                    <input type="number" class="form-control" id="cantidad" name="cantidad"
+                        value="<?= htmlspecialchars($datos['cantidad']) ?>" placeholder="Cantidad de la materia prima" required>
                 </div>
                 <div class="col-sm-6">
                     <label for="marca" class="form-label">Marca</label>
                     <input type="text" class="form-control" id="marca" name="marca"
-                        value="<?= htmlspecialchars($datos['marca']) ?>" required>
+                        value="<?= htmlspecialchars($datos['marca']) ?>" placeholder="Marca" required>
                 </div>
                 <!-- Campos agregados -->
                 <div class="col-sm-6">
-                    <label for="stok_minimo" class="form-label">Stock Mínimo</label>
-                    <input type="number" class="form-control" id="stok_minimo" name="stok_minimo"
-                        value="<?= htmlspecialchars($datos['stok_minimo']) ?>" required>
+                    <label for="stock_minimo" class="form-label">Stock Mínimo</label>
+                    <input type="number" class="form-control" id="stock_minimo" name="stock_minimo"
+                        value="<?= htmlspecialchars($datos['stock_minimo']) ?>" required>
                 </div>
                 <div class="col-sm-6">
-                    <label for="stok_maximo" class="form-label">Stock Máximo</label>
-                    <input type="number" class="form-control" id="stok_maximo" name="stok_maximo"
-                        value="<?= htmlspecialchars($datos['stok_maximo']) ?>" required>
+                    <label for="stock_maximo" class="form-label">Stock Máximo</label>
+                    <input type="number" class="form-control" id="stock_maximo" name="stock_maximo"
+                        value="<?= htmlspecialchars($datos['stock_maximo']) ?>" required>
                 </div>
                 <!-- NUEVOS CAMPOS DE FECHAS -->
                 <div class="col-sm-6">
@@ -120,7 +133,7 @@ if (isset($_GET['id'])) {
                         value="<?= htmlspecialchars($datos['fecha_vencimiento']) ?>" required>
 
                 </div>
-                
+
             </div>
             <br>
             <div class="row row-cols-1 row-cols-md-2 g-4">

@@ -10,9 +10,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fcha_ing = $_POST['fcha_ing'];
     $fcha_vto = $_POST['fcha_vto'];
     $cont_neto = $_POST['cont_neto'];
+    $cantidad = $_POST['cantidad'];
     $marca = $_POST['marca'];
-    //$id_usuario = 1;
     $stock_minimo = 1.0;
+    $stock_maximo = 1.0;
 
     // Verifica si todos los campos requeridos están llenos
     // Si alguno de los campos está vacío, redirige a la página de materia prima
@@ -23,14 +24,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         !empty($fcha_ing) &&
         !empty($fcha_vto) &&
         !empty($cont_neto) &&
+        !empty($cantidad) &&
         !empty($marca)
     ) {
         // Insertar en Materia Prima
         $sql_mp = "INSERT INTO materia_prima
-        (codigo_barra, descripcion, contenido_neto, marca, stock_minimo)
-        VALUES (?,?,?,?,?)";
+        (codigo_barra, descripcion, contenido_neto, marca, stock_minimo, stock_maximo)
+        VALUES (?,?,?,?,?,?)";
         $stmt1 = $conexion->prepare($sql_mp);
-        $stmt1->bind_param("ssssi", $cod_barra, $descript, $cont_neto, $marca, $stock_minimo);
+        $stmt1->bind_param("ssssii", $cod_barra, $descript, $cont_neto, $marca, $stock_minimo, $stock_maximo);
         if ($stmt1->execute()) {
             $id_materia_prima = $conexion->insert_id; // Obtener el ID para usar en la otra tabla
 
