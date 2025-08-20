@@ -33,6 +33,17 @@
                 <li class="nav-item">
                     <a class="nav-link" href="gestion_alertas/alertas.php">Alertas</a>
                 </li>
+
+                <!-- Sección: Motivos -->
+                 <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" id="motivosDropdown" role="button" data-bs-toggle="dropdown">
+                        Motivos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="motivosDropdown">
+                        <li><a class="dropdown-item" href="ABM_Motivos/ABM_Motivos_Lista.php">Ver Motivos</a></li>
+                        <li><a class="dropdown-item" href="ABM_Motivos/ABM_Motivos.php">Crear Motivo</a></li>
+                    </ul>
+                </li>
             </ul>
 
             <!-- Se puede agregar mas botones como "Login" o "Cerrar sesión" -->

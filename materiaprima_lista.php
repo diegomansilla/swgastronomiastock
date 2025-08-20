@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php'; // Incluye el archivo de conexión a la base de datos
+include 'conectar.php'; // Incluye el archivo de conexión a la base de datos
 
 // Consulta para obtener todas las materias primas
 // Se seleccionan los campos necesarios de la tabla materia_prima
@@ -30,17 +30,57 @@ $resultado = $conexion->query($sql);
 <body class="d-flex flex-column min-vh-100">
 
     <?php if (isset($_GET['ok']) && $_GET['ok'] == 'editado'): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            ✅ Materia prima actualizada correctamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <!-- Modal de Éxito -->
+        <div class="modal fade" id="modalOk" tabindex="-1" aria-labelledby="modalOkLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-success text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalOkLabel">✅ Éxito. Materia Prima actualizada correctamente</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Materia prima guardada correctamente.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var modalOk = new bootstrap.Modal(document.getElementById('modalOk'));
+                modalOk.show();
+            });
+        </script>
     <?php endif; ?>
 
     <?php if (isset($_GET['ok']) && $_GET['ok'] == 'eliminado'): ?>
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            ⚠️ Materia prima eliminada correctamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <!-- Modal de Éxito -->
+        <div class="modal fade" id="modalOk" tabindex="-1" aria-labelledby="modalOkLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-success text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalOkLabel">⚠️ Éxito. Materia Prima eliminada correctamente</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Materia prima eliminada correctamente.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var modalOk = new bootstrap.Modal(document.getElementById('modalOk'));
+                modalOk.show();
+            });
+        </script>
     <?php endif; ?>
 
     <?php

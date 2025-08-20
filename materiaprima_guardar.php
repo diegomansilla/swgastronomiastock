@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';
+include 'conectar.php';
 
 // Verifica si lo que se trae es por POST
 // Si es así, se procede a guardar los datos en la base de datos
@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES (?,?,?,?,?)";
 
             $stmt2 = $conexion->prepare($sql_ing);
-            $stmt2->bind_param("isdss", $id_materia_prima, $fcha_ing, $cont_neto, $fcha_lote, $fcha_vto);
+            $stmt2->bind_param("isdss", $id_materia_prima, $fcha_ing, $cantidad, $fcha_lote, $fcha_vto);
 
             if ($stmt2->execute()){
                 //Si esta todo OK

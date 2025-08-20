@@ -1,5 +1,5 @@
 <?php
-include 'conectar2.php';
+include 'conectar.php';
 
 $edicion = false;
 
@@ -63,15 +63,66 @@ if (isset($_GET['id'])) {
     <div class="container mt-5 mb-5 flex-grow-1">
 
         <?php if (isset($_GET['ok'])): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                ✅ Materia prima guardada correctamente.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <!-- Modal de Éxito -->
+            <div class="modal fade" id="modalOk" tabindex="-1" aria-labelledby="modalOkLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-success text-white">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalOkLabel">✅ Éxito. Materia prima guardada</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            Materia prima guardada correctamente.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var modalOk = new bootstrap.Modal(document.getElementById('modalOk'));
+                    modalOk.show();
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('ok');
+                        window.history.replaceState({}, document.title, url.pathname);
+                    }
+                });
+            </script>
+
         <?php elseif (isset($_GET['error'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                ❌ Hubo un error al guardar la materia prima.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <!-- Modal de Error -->
+            <div class="modal fade" id="modalError" tabindex="-1" aria-labelledby="modalErrorLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-danger text-white">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalErrorLabel">❌ Error</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            Hubo un error al guardar la materia prima.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var modalError = new bootstrap.Modal(document.getElementById('modalError'));
+                    modalError.show();
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('error');
+                        window.history.replaceState({}, document.title, url.pathname);
+                    }
+                });
+            </script>
         <?php endif; ?>
 
         <h2 class="mb-4 text-center">Materia Prima</h2>
