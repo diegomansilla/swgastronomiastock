@@ -2,30 +2,30 @@
 include 'conectar.php';
 
 // Verifica si se ha pasado un ID válido por GET
-// Si el ID es numérico, se procede a eliminar el registro
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $id = $_GET['id'];// ID del registro a eliminar
+    $id = (int) $_GET['id']; // Forzamos a entero
 
     $sql = "DELETE FROM ABM_Motivos WHERE id = ?";
     $stmt = $connection->prepare($sql);
-    $stmt->bind_param("i", $id);// Vincula el parámetro ID a la consulta preparada
 
-    // Ejecuta la consulta preparada
-    // Si la ejecución es exitosa, cierra la sentencia y la conexión, y redirige a la lista de materias primas con un mensaje de éxito
-    // Si falla, cierra la sentencia y la conexión, y redirige a la lista de materias primas con un mensaje de error
-    // Si no se pasa un ID válido, redirige a la lista de materias primas
-    if ($stmt->execute()) {
+    if ($stmt) {
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            header("Location: ABM_Motivos_lista.php?ok=eliminado");
+        } else {
+            header("Location: ABM_Motivos_lista.php?error=delete");
+        }
+
         $stmt->close();
-        $connection->close();
-        header("Location: ABM_Motivos_lista.php?ok=eliminado");
-        exit;
-    }else{
-        $stmt->close();
-        $connection->close();
-        header("Location: ABM_Motivos_lista.php?error=delete");
-        exit;
+    } else {
+        header("Location: ABM_Motivos_lista.php?error=stmt");
     }
-}else {
+
+    $connection->close();
+    exit;
+} else {
     header("Location: ABM_Motivos_lista.php?error=param");
+    exit;
 }
 ?>
