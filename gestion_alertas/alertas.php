@@ -1,6 +1,8 @@
 <?php
 include('consulta_alertas.php'); 
-?>
+include("C:\xampp\htdocs\gastronomia\swgastronomiastock\includes\header.php
+")?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -9,35 +11,12 @@ include('consulta_alertas.php');
     <meta charset="utf-8">
     <title>Gestión de Alertas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-    .alert-row {
-        transition: background 0.3s, opacity 0.3s;
-    }
-
-    .prio-low {
-        background: #fff3cd !important;
-    }
-
-    .prio-medium {
-        background: #ffe5b4 !important;
-    }
-
-    .prio-high {
-        background: #f8d7da !important;
-    }
-
-    .alert-completed {
-        opacity: 0.5;
-    }
-
-    .badge-priority {
-        font-size: 0.75em;
-        padding: 0.25em 0.5em;
-    }
-    </style>
+    
 </head>
 
 <body>
+    
+    
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="#">Gastronomía</a>
@@ -221,6 +200,9 @@ include('consulta_alertas.php');
         });
     });
     </script>
+    <?php
+    include 'C:\xampp\htdocs\gastronomia\swgastronomiastock\includes\footer.php';
+    ?>
 </body>
 
 </html>
