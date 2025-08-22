@@ -1,5 +1,5 @@
 <?php
-include 'conectar.php';
+include '../conectar.php';
 
 // Verifica si se ha pasado un ID válido por GET
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {

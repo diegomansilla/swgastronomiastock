@@ -1,5 +1,5 @@
 <?php
-include 'conectar.php';
+include '../conectar.php';
 
 $term = isset($_GET['term']) ? trim($_GET['term']) : ''; // Término de búsqueda
 
