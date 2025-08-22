@@ -1,5 +1,5 @@
 <?php
-include '../conectar.php'; // Incluye archivo de conexión a la base de datos
+include 'conectar.php'; // Incluye archivo de conexión a la base de datos
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = isset($_POST['id']) ? $_POST['id'] : null;

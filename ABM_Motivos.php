@@ -1,5 +1,5 @@
 <?php
-include '../conectar.php';//Incluye en archivo de conexion a base de datos
+include 'conectar.php';//Incluye en archivo de conexion a base de datos
 $edicion = false; // Variable para determinar si es una edición o un nuevo registro
 
 // Datos por defecto para el formulario
