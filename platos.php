@@ -1,4 +1,4 @@
-<?php include("conectar2.php"); ?>
+<?php include("conectar.php"); ?>
 
 <!DOCTYPE html>
 <html lang="es">

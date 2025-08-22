@@ -1,9 +1,11 @@
 <?php
-include 'conectar.php';// Incluye el archivo de conexión a la base de datos
+include '../conectar.php';// Incluye el archivo de conexión a la base de datos
 
 // Consulta para obtener todas las materias primas
 // Se seleccionan los campos necesarios de la tabla materia_prima
-$sql = "select id, codigo_barra, descripcion";
+$sql = "SELECT id, descripcion FROM ABM_Motivos";
+
+
 
 // Ejecuta la consulta y almacena el resultado
 $resultado = $connection->query($sql);
@@ -82,27 +84,28 @@ $resultado = $connection->query($sql);
     <div class="container mt-5 mb-5 flex-grow-1">
         <h2 class="mb-4 text-center">Listado de ABM Motivos</h2>
         <div class="mb-3">
-            <input type="text" class="form-control" id="buscador" placeholder="Buscar por descripción, marca o código" onkeyup="buscarMateriaPrima()">
+            <input type="text" class="form-control" id="buscador" placeholder="Buscar por descripción, marca o código" onkeyup="buscarMotivos()">
         </div>
         <div>
-            <a href="materia_prima.php" class="btn btn-success">Nueva Materia Prima</a>
+            <a href="ABM_Motivos.php" class="btn btn-success">Nuevo Motivo</a>
         </div>
         <div class="row row-cols-1 row-cols-md-2 g-4">
             <table class="table table-striped table-hover">
                 <thead>
-                    <tr>
-                        <th>Código de Barra</th>
-                        <th>Descripción</th>
-                       
-                    </tr>
-                </thead>
+                <tr>
+                    <th>id</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
                 <tbody>
                     <?php if ($resultado->num_rows > 0): ?>
                         <?php while ($fila = $resultado->fetch_assoc()): ?>
                             <tr>
-                                <td><?= $fila['codigo_barra'] ?></td>
+                                <td><?= $fila['id'] ?></td>
                                 <td><?= $fila['descripcion'] ?></td>
-                                
+                                <td>
                                     <a href="ABM_Motivos.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
                                     <a href="ABM_Motivos_eliminar.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este registro?')">Eliminar</a>
                                 </td>
@@ -130,7 +133,7 @@ $resultado = $connection->query($sql);
     <script src="js/particulares.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        buscarMateriaPrima('buscador', 'table tbody');
+        buscarMotivos('buscador', 'table tbody');
         });
     </script>
 </body>

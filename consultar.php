@@ -1,5 +1,5 @@
 <?php
-include("conectar2.php");
+include("conectar.php");
 $plato
 $id_plato = intval($_GET['id']); // ID recibido por GET
 
