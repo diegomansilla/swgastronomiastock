@@ -72,8 +72,8 @@ https://cdn.jsdelivr.net/npm/bootswatch@5.3.7/dist/morph/bootstrap.min.css
             </div>
 
         </div>
-    </div>
-    <!-- Card Motivos -->
+
+        <!-- Card Motivos -->
             <div class="col">
                 <div class="card h-100">
                     <div class="card-body">
@@ -84,6 +84,8 @@ https://cdn.jsdelivr.net/npm/bootswatch@5.3.7/dist/morph/bootstrap.min.css
                 </div>
             </div>
 
+    </div>
+    
 
     <?php
     include 'includes/footer.php';
