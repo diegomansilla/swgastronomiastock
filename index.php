@@ -73,6 +73,17 @@ https://cdn.jsdelivr.net/npm/bootswatch@5.3.7/dist/morph/bootstrap.min.css
 
         </div>
     </div>
+    <!-- Card Motivos -->
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Motivos</h5>
+                        <p class="card-text">Ver y administrar Motivos.</p>
+                        <a href="ABM_Motivos.php" class="btn btn-primary">Ver Motivos</a>
+                    </div>
+                </div>
+            </div>
+
 
     <?php
     include 'includes/footer.php';

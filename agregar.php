@@ -1,5 +1,5 @@
 <?php
-include("conectar2.php");
+include("conectar.php");
 
 // Aquí deberías obtener el ID de usuario real de sesión o fijo para pruebas
 $id_usuario = 1; // Cambia esto según tu lógica
