@@ -140,7 +140,7 @@ $resultadosst = $conexion->query($sqlsst);
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="9" class="text-center">No hay materias primas registradas.</td>
+                            <td colspan="8" class="text-center">No hay materias primas registradas.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -180,7 +180,7 @@ $resultadosst = $conexion->query($sqlsst);
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="9" class="text-center">No hay materias primas registradas.</td>
+                            <td colspan="8" class="text-center">No hay materias primas registradas.</td>
                         </tr>
                     <?php endif; ?>
                     <?php $conexion->close(); ?>

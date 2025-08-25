@@ -10,12 +10,12 @@ if (isset($_GET['id'])) {
     if ($stmt->execute()) {
         $stmt->close();
         $conexion->close();
-        header("Location: materiaprima_lista.php?ok=baja");
+        header("Location: materiaprima_lista.php?ok=alta");
         exit;
     } else {
         $stmt->close();
         $conexion->close();
-        header("Location: materiaprima_lista.php?error=baja");
+        header("Location: materiaprima_lista.php?error=alta");
         exit;
     }
 } else {
