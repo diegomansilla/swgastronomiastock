@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 12, 2025 at 11:51 PM
+-- Generation Time: Aug 26, 2025 at 12:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -83,17 +83,19 @@ CREATE TABLE `materia_prima` (
   `contenido_neto` varchar(200) NOT NULL COMMENT 'unidad de medida',
   `marca` varchar(200) NOT NULL,
   `stock_minimo` double NOT NULL,
-  `stock_maximo` double NOT NULL
+  `stock_maximo` double NOT NULL,
+  `estado` int(11) DEFAULT 1 COMMENT '1 = activo, 0 = inactivo',
+  `id_unidad_medida` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
 
 --
 -- Dumping data for table `materia_prima`
 --
 
-INSERT INTO `materia_prima` (`id`, `codigo_barra`, `descripcion`, `contenido_neto`, `marca`, `stock_minimo`, `stock_maximo`) VALUES
-(2, '123412451123', 'Harina 0000', '500g', 'X', 10, 50),
-(3, '123235325', 'Maple de huevos', '2kg', 'Huevo Feliz', 5, 20),
-(4, '144325346363', 'Caja de tomate', '125g', 'Tomatito', 5, 15);
+INSERT INTO `materia_prima` (`id`, `codigo_barra`, `descripcion`, `contenido_neto`, `marca`, `stock_minimo`, `stock_maximo`, `estado`, `id_unidad_medida`) VALUES
+(2, '123412451123', 'Harina 0000', '500g', 'X', 10, 50, 1, NULL),
+(3, '123235325', 'Maple de huevos', '2kg', 'Huevo Feliz', 5, 20, 1, NULL),
+(4, '144325346363', 'Caja de tomate', '125g', 'Tomatito', 5, 15, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -133,6 +135,18 @@ CREATE TABLE `salida_materia_prima` (
   `cantidad` float NOT NULL,
   `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `unidad_medida`
+--
+
+CREATE TABLE `unidad_medida` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `abreviatura` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -185,7 +199,8 @@ ALTER TABLE `ingreso_materia_prima`
 -- Indexes for table `materia_prima`
 --
 ALTER TABLE `materia_prima`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_unidad_medida` (`id_unidad_medida`);
 
 --
 -- Indexes for table `motivos`
@@ -206,6 +221,12 @@ ALTER TABLE `salida_materia_prima`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_materia_prima` (`id_materia_prima`),
   ADD KEY `id_motivo` (`id_motivo`);
+
+--
+-- Indexes for table `unidad_medida`
+--
+ALTER TABLE `unidad_medida`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `usuarios`
@@ -260,6 +281,12 @@ ALTER TABLE `salida_materia_prima`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `unidad_medida`
+--
+ALTER TABLE `unidad_medida`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -286,6 +313,12 @@ ALTER TABLE `ingredientes_plato`
 --
 ALTER TABLE `ingreso_materia_prima`
   ADD CONSTRAINT `ingreso_materia_prima_ibfk_1` FOREIGN KEY (`id_materia_prima`) REFERENCES `materia_prima` (`id`);
+
+--
+-- Constraints for table `materia_prima`
+--
+ALTER TABLE `materia_prima`
+  ADD CONSTRAINT `materia_prima_ibfk_1` FOREIGN KEY (`id_unidad_medida`) REFERENCES `unidad_medida` (`id`);
 
 --
 -- Constraints for table `salida_materia_prima`
