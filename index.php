@@ -33,7 +33,7 @@ https://cdn.jsdelivr.net/npm/bootswatch@5.3.7/dist/morph/bootstrap.min.css
                     <div class="card-body">
                         <h5 class="card-title">Ingredientes</h5>
                         <p class="card-text">Ver el listado de ingredientes cargados en stock.</p>
-                        <a href="materiaprima_lista.php" class="btn btn-lg btn-success">Ver Ingredientes</a>
+                        <a href="materiaprima_lista.php" class="btn btn btn-success">Ver Ingredientes</a>
                     </div>
                 </div>
             </div>
