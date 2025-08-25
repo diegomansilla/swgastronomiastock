@@ -1,44 +1,28 @@
 <?php
-include_once('../conectar2.php');
+include '..\conectar.php';
 
-$alertas = [];
-
-$query = "
-SELECT 
+$sql_alertas = "SELECT 
     mp.id,
-    mp.descripcion AS nombre,
-    COALESCE(SUM(imp.cantidad), 0) AS stock_actual,
+    mp.descripcion,
+    mp.marca,
     mp.stock_minimo,
-    DATE_FORMAT(
-        MIN(CASE WHEN imp.fecha_vencimiento != '0000-00-00' THEN imp.fecha_vencimiento END), 
-        '%d/%m/%Y'
-    ) AS fecha_vencimiento,
-    MIN(CASE WHEN imp.fecha_vencimiento != '0000-00-00' THEN imp.fecha_vencimiento END) AS fecha_venc_raw
-FROM 
-    materia_prima mp
-LEFT JOIN 
-    ingreso_materia_prima imp ON mp.id = imp.id_materia_prima
-GROUP BY 
-    mp.id, mp.descripcion, mp.stock_minimo
-HAVING 
-    COALESCE(SUM(imp.cantidad), 0) <= mp.stock_minimo
-    OR 
-    MIN(CASE WHEN imp.fecha_vencimiento != '0000-00-00' THEN imp.fecha_vencimiento END) <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-ORDER BY 
+    imp.cantidad,
+    imp.fecha_lote,
+    imp.fecha_vencimiento,
     CASE 
-        WHEN COALESCE(SUM(imp.cantidad), 0) <= 0 OR MIN(CASE WHEN imp.fecha_vencimiento != '0000-00-00' THEN imp.fecha_vencimiento END) < CURDATE() THEN 1
-        WHEN DATEDIFF(MIN(CASE WHEN imp.fecha_vencimiento != '0000-00-00' THEN imp.fecha_vencimiento END), CURDATE()) <= 3 OR COALESCE(SUM(imp.cantidad), 0) <= (mp.stock_minimo / 2) THEN 2
-        ELSE 3
-    END,
-    MIN(CASE WHEN imp.fecha_vencimiento != '0000-00-00' THEN imp.fecha_vencimiento END) ASC
+        WHEN imp.fecha_vencimiento < CURDATE() THEN 'VENCIDO'
+        WHEN imp.fecha_vencimiento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) THEN 'POR VENCER'
+        WHEN imp.cantidad < mp.stock_minimo THEN 'STOCK BAJO'
+        WHEN imp.cantidad BETWEEN mp.stock_minimo AND mp.stock_minimo + 5 THEN 'STOCK CERCA DEL MINIMO'
+        ELSE 'OK'
+    END AS estado
+FROM materia_prima mp
+LEFT JOIN ingreso_materia_prima imp 
+    ON mp.id = imp.id;
 ";
 
-$resultado = mysqli_query($conexion, $query);
-if ($resultado) {
-    while ($fila = mysqli_fetch_assoc($resultado)) {
-        $alertas[] = $fila;
-    }
-} else {
-    die("Error en la consulta: " . mysqli_error($conexion));
-}
+$result_alertas = $conexion->query($sql_alertas);
+
+$sql_modal = $sql_alertas; 
+$result_modal = $conexion->query($sql_modal);
 ?>

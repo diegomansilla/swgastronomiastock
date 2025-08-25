@@ -1,5 +1,5 @@
 <?php
-include("conectar2.php");
+include("conectar.php");
 
 $id = intval($_GET['id']);
 
