@@ -1,6 +1,6 @@
 <?php
 include("conectar.php");
-$plato
+$plato;// agrege punto y coma 
 $id_plato = intval($_GET['id']); // ID recibido por GET
 
 $sql = " SELECT mp.descripcion, mp.contenido_neto, mp.marca, ip.cantidad
