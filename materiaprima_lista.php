@@ -1,20 +1,29 @@
 <?php
 include 'conectar.php'; // Incluye el archivo de conexión a la base de datos
 
-// Consulta para obtener todas las materias primas
+// Consulta para obtener todas las materias primas con stock
 // Se seleccionan los campos necesarios de la tabla materia_prima
-$sql = "SELECT mp.id, mp.codigo_barra,
-        mp.descripcion,
-        mp.contenido_neto,
-        mp.marca, i.fecha_lote, i.fecha,i.fecha_vencimiento,
-        COALESCE(SUM(i.cantidad),0) - COALESCE(SUM(s.cantidad),0) AS cantidad
+$sqlcst = "SELECT mp.id, mp.codigo_barra, mp.descripcion,
+        mp.contenido_neto, um.nombre AS unidad_medida,
+        mp.marca, mp.stock_minimo, mp.stock_maximo
     FROM materia_prima mp
-    LEFT JOIN ingreso_materia_prima i ON mp.id = i.id_materia_prima
-    LEFT JOIN salida_materia_prima s ON mp.id = s.id_materia_prima
-    GROUP BY mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.marca";
+    LEFT JOIN unidad_medida um ON mp.id_unidad_medida = um.id
+    WHERE mp.estado = 1
+    GROUP BY mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, unidad_medida";
 
-// Ejecuta la consulta y almacena el resultado
-$resultado = $conexion->query($sql);
+// Consulta para obtener todas las materias primas sin stock
+// Se seleccionan los campos necesarios de la tabla materia_prima
+$sqlsst = "SELECT mp.id, mp.codigo_barra, mp.descripcion,
+        mp.contenido_neto, um.nombre AS unidad_medida,
+        mp.marca, mp.stock_minimo, mp.stock_maximo
+    FROM materia_prima mp
+    LEFT JOIN unidad_medida um ON mp.id_unidad_medida = um.id
+    WHERE mp.estado = 0
+    GROUP BY mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, unidad_medida";
+
+// Ejecuta las consultas y almacena el resultado con o sin stock
+$resultadocst = $conexion->query($sqlcst);
+$resultadosst = $conexion->query($sqlsst);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,6 +34,7 @@ $resultado = $conexion->query($sql);
     <title>Sistema Gestión de Stock Software - Gastronomía</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' href='css/bootstrap.min.css'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -94,38 +104,77 @@ $resultado = $conexion->query($sql);
             <input type="text" class="form-control" id="buscador" placeholder="Buscar por descripción, marca o código" onkeyup="buscarMateriaPrima()">
         </div>
         <div>
-            <a href="materia_prima.php" class="btn btn-success">Nueva Materia Prima</a>
+            <a href="materia_prima.php" class="btn btn-success"><i class="bi bi-plus"></i>Agregar</a>
         </div>
+        <h2 class="mb-4 text-center">En Stock</h2>
         <div class="row row-cols-1 row-cols-md-2 g-4">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Código de Barra</th>
                         <th>Descripción</th>
-                        <th>Cantidad</th>
-                        <th>Fecha Lote</th>
-                        <th>Fecha Ingreso</th>
-                        <th>Fecha Vencimiento</th>
                         <th>Contenido Neto</th>
+                        <th>Unidad de Medida</th>
                         <th>Marca</th>
+                        <th>Stock Mínimo</th>
+                        <th>Stock Máximo</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if ($resultado->num_rows > 0): ?>
-                        <?php while ($fila = $resultado->fetch_assoc()): ?>
+                    <?php if ($resultadocst->num_rows > 0): ?>
+                        <?php while ($fila = $resultadocst->fetch_assoc()): ?>
                             <tr>
                                 <td><?= $fila['codigo_barra'] ?></td>
                                 <td><?= $fila['descripcion'] ?></td>
-                                <td><?= $fila['cantidad'] ?></td>
-                                <td><?= $fila['fecha_lote'] ?></td>
-                                <td><?= $fila['fecha'] ?></td>
-                                <td><?= $fila['fecha_vencimiento'] ?></td>
                                 <td><?= htmlspecialchars($fila['contenido_neto']) ?></td>
+                                <td><?= htmlspecialchars($fila['unidad_medida']) ?></td>
                                 <td><?= htmlspecialchars($fila['marca']) ?></td>
+                                <td><?= htmlspecialchars($fila['stock_minimo']) ?></td>
+                                <td><?= htmlspecialchars($fila['stock_maximo']) ?></td>
                                 <td>
-                                    <a href="materia_prima.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
-                                    <a href="materiaprima_baja.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-danger">Dar de Baja</a>
+                                    <a href="materia_prima.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i>Editar</a>
+                                    <a href="materiaprima_baja.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que desea dar de baja esta materia prima?');"><i class="bi bi-trash"></i>Baja</a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="9" class="text-center">No hay materias primas registradas.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+
+        </div>
+        <h2 class="mb-4 text-center">Sin Stock</h2>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Código de Barra</th>
+                        <th>Descripción</th>
+                        <th>Contenido Neto</th>
+                        <th>Unidad de Medida</th>
+                        <th>Marca</th>
+                        <th>Stock Mínimo</th>
+                        <th>Stock Máximo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($resultadosst->num_rows > 0): ?>
+                        <?php while ($fila = $resultadosst->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= $fila['codigo_barra'] ?></td>
+                                <td><?= $fila['descripcion'] ?></td>
+                                <td><?= htmlspecialchars($fila['contenido_neto']) ?></td>
+                                <td><?= htmlspecialchars($fila['unidad_medida']) ?></td>
+                                <td><?= htmlspecialchars($fila['marca']) ?></td>
+                                <td><?= htmlspecialchars($fila['stock_minimo']) ?></td>
+                                <td><?= htmlspecialchars($fila['stock_maximo']) ?></td>
+                                <td>
+                                    <a href="materiaprima_alta.php?id=<?= $fila['id'] ?>" class="btn btn-sm btn-success" onclick="return confirm('¿Seguro que desea dar de alta esta materia prima?');"><i class="bi bi-plus-circle"></i>Alta</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>

@@ -8,13 +8,10 @@ $datos = [
     'codigo_barra' => '',
     'descripcion' => '',
     'contenido_neto' => '',
-    'cantidad' => '',
     'marca' => '',
+    'unidad_medida' => '',
     'stock_minimo' => '',
-    'stock_maximo' => '',
-    'fecha' => '',
-    'fecha_lote' => '',
-    'fecha_vencimiento' => ''
+    'stock_maximo' => ''
 ];
 
 // Si es edición, obtener datos
@@ -22,15 +19,14 @@ if (isset($_GET['id'])) {
     $edicion = true;
     $id = $_GET['id'];
 
-    $sql = "SELECT mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, mp.marca, 
-       mp.stock_minimo, mp.stock_maximo,
-       imp.fecha, imp.cantidad, imp.fecha_lote, imp.fecha_vencimiento
-       FROM materia_prima mp
-       LEFT JOIN ingreso_materia_prima imp 
-       ON imp.id_materia_prima = mp.id
-       WHERE mp.id = ?
-       ORDER BY imp.fecha DESC
-       LIMIT 1";
+    $sql = "SELECT 
+    mp.id, mp.codigo_barra, mp.descripcion, mp.contenido_neto, 
+    mp.marca, mp.id_unidad_medida,
+    um.nombre AS unidad_nombre,
+    mp.stock_minimo, mp.stock_maximo
+    FROM materia_prima mp
+    LEFT JOIN unidad_medida um ON um.id = mp.id_unidad_medida
+    WHERE mp.id = ?";
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -45,6 +41,12 @@ if (isset($_GET['id'])) {
     $stmt->close();
 }
 ?>
+<?php
+$sql_um = "SELECT id, nombre, abreviatura
+            FROM unidad_medida";
+$result_um = $conexion->query($sql_um);
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -54,6 +56,7 @@ if (isset($_GET['id'])) {
     <title>Sistema Gestión de Stock Software - Gastronomía</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' href='css/bootstrap.min.css'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -125,7 +128,46 @@ if (isset($_GET['id'])) {
             </script>
         <?php endif; ?>
 
-        <h2 class="mb-4 text-center">Materia Prima</h2>
+        <?php if (isset($_GET['error']) && $_GET['error'] === 'codigorepetido'): ?>
+            <!-- Modal de Código de Barra Repetido -->
+            <div class="modal fade" id="modalCodigoRepetido" tabindex="-1" aria-labelledby="modalCodigoRepetidoLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-warning text-dark">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalCodigoRepetidoLabel">⚠️ Código de barra repetido</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            El código de barra ingresado ya existe en otra materia prima.
+                            Por favor, verifique e ingrese uno diferente.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var modalCodigo = new bootstrap.Modal(document.getElementById('modalCodigoRepetido'));
+                    modalCodigo.show();
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('error');
+                        window.history.replaceState({}, document.title, url.pathname);
+                    }
+                });
+            </script>
+        <?php endif; ?>
+
+        <h2 class="mb-4 text-center">
+            <?php if ($edicion): ?>
+                Editar <?= htmlspecialchars($datos['descripcion']) ?>
+            <?php else: ?>
+                Materia Prima
+            <?php endif; ?>
+        </h2>
         <form action="<?= $edicion ? 'materiaprima_actualizar.php' : 'materiaprima_guardar.php' ?>" method="POST">
             <?php if ($edicion): ?>
                 <input type="hidden" name="id" value="<?= $datos['id'] ?>">
@@ -143,13 +185,23 @@ if (isset($_GET['id'])) {
                 </div>
                 <div class="col-sm-6">
                     <label for="cont_neto" class="form-label">Contenido Neto</label>
-                    <input type="text" class="form-control" id="cont_neto" name="cont_neto"
-                        value="<?= htmlspecialchars($datos['contenido_neto']) ?>" placeholder="Contenido Neto de la materia prima en su unidad de medida" required>
+                    <input type="number" class="form-control" id="cont_neto" name="cont_neto"
+                        value="<?= htmlspecialchars($datos['contenido_neto']) ?>" placeholder="Contenido Neto" required>
                 </div>
                 <div class="col-sm-6">
-                    <label for="cantidad" class="form-label">Cantidad</label>
-                    <input type="number" class="form-control" id="cantidad" name="cantidad"
-                        value="<?= htmlspecialchars($datos['cantidad']) ?>" placeholder="Cantidad de la materia prima" required>
+                    <label for="unidad_medida" class="form-label">Unidad de Medida</label>
+                    <select class="form-select" id="unidad_medida" name="unidad_medida" required>
+                        <option value="" disabled <?= empty($datos['id_unidad_medida']) ? 'selected' : '' ?>>Seleccione una unidad de medida</option>
+                        <?php
+                        if ($result_um->num_rows > 0) {
+                            while ($row = $result_um->fetch_assoc()) {
+                                $selected = ($row['id'] == $datos['id_unidad_medida']) ? 'selected' : '';
+                                echo '<option value="' . $row['id'] . '" ' . $selected . '>' . htmlspecialchars($row['nombre']) . ' (' . htmlspecialchars($row['abreviatura']) . ')</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+
                 </div>
                 <div class="col-sm-6">
                     <label for="marca" class="form-label">Marca</label>
@@ -167,32 +219,14 @@ if (isset($_GET['id'])) {
                     <input type="number" class="form-control" id="stock_maximo" name="stock_maximo"
                         value="<?= htmlspecialchars($datos['stock_maximo']) ?>" required>
                 </div>
-                <!-- NUEVOS CAMPOS DE FECHAS -->
-                <div class="col-sm-6">
-                    <label for="fecha" class="form-label">Fecha de Ingreso</label>
-                    <input type="date" class="form-control" id="fcha_ing" name="fcha_ing"
-                        value="<?= htmlspecialchars($datos['fecha']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="fecha_lote" class="form-label">Fecha de Lote</label>
-                    <input type="date" class="form-control" id="fcha_lote" name="fcha_lote"
-                        value="<?= htmlspecialchars($datos['fecha_lote']) ?>" required>
-                </div>
-                <div class="col-sm-6">
-                    <label for="fecha_vencimiento" class="form-label">Fecha de Vencimiento</label>
-                    <input type="date" class="form-control" id="fcha_vto" name="fcha_vto"
-                        value="<?= htmlspecialchars($datos['fecha_vencimiento']) ?>" required>
-
-                </div>
-
             </div>
             <br>
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                <div class="col-sm-6">
-                    <button class="btn btn-primary" type="submit">Guardar</button>
-                    <a href="materiaprima_lista.php" class="btn btn-danger">Cancelar</a>
-                </div>
+            <!--<div class="row row-cols-1 row-cols-md-2 g-4">-->
+            <div class="col-sm-6">
+                <button class="btn btn-primary" type="submit"><i class="bi bi-check-lg"></i>Guardar</button>
+                <a href="materiaprima_lista.php" class="btn btn-danger"><i class="bi bi-x-lg"></i>Cancelar</a>
             </div>
+            <!--</div>-->
         </form>
     </div>
 

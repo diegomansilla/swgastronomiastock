@@ -33,7 +33,7 @@ while ($fila = $result->fetch_assoc()) {
             <td>{$fila['marca']}</td>
             <td>
             <a href='materia_prima.php?id={$fila['id']}' class='btn btn-sm btn-warning'>Editar</a>
-            <button class='btn btn-sm btn-danger' disabled>Eliminar</button>
+            <a href='materiaprima_baja.php?id={$fila['id']}' class='btn btn-sm btn-danger'>Dar de Baja</a>
             </td>
     </tr>";
 }
