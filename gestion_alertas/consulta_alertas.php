@@ -1,7 +1,6 @@
 <?php
 include '..\conectar.php';
 
-// Consulta para tabla principal (modificable)
 $sql_alertas = "SELECT 
     mp.id,
     mp.descripcion,
@@ -24,7 +23,6 @@ LEFT JOIN ingreso_materia_prima imp
 
 $result_alertas = $conexion->query($sql_alertas);
 
-// Consulta para modal (solo lectura)
-$sql_modal = $sql_alertas; // misma consulta, pero guardada en otro result
+$sql_modal = $sql_alertas; 
 $result_modal = $conexion->query($sql_modal);
 ?>
