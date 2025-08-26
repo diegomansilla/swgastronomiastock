@@ -1,5 +1,5 @@
 <?php
-include 'conectar.php';
+include 'conectar2.php';
 
 $edicion = false;
 

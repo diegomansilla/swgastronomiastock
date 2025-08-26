@@ -41,8 +41,8 @@ if ($result->num_rows > 0) {
                 <td>{$fila['contenido_neto']}</td>
                 <td>{$fila['marca']}</td>
                 <td>
-                    <a href='materia_prima.php?id={$fila['id']}' class='btn btn-sm btn-warning'>Editar</a>
-                    <button class='btn btn-sm btn-danger' disabled>Eliminar</button>
+                    <a href='materia_prima.php?id={$fila['id']}' class='btn btn-sm btn-warning'><i class='bi bi-pencil'></i>Editar</a>
+                    <a href='materiaprima_baja.php?id={$fila['id']}' class='btn btn-sm btn-danger' onclick='return confirm('¿Seguro que desea dar de baja esta materia prima?');'><i class='bi bi-trash'></i>Baja</a>
                 </td>
               </tr>";
     }
